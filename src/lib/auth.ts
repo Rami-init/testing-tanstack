@@ -1,7 +1,21 @@
-import { betterAuth } from 'better-auth'
+import { betterAuth } from "better-auth";
+import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { openAPI } from "better-auth/plugins";
+import { db } from "@/db";
 
 export const auth = betterAuth({
-  emailAndPassword: {
-    enabled: true,
-  },
-})
+	database: drizzleAdapter(db, {
+		provider: "pg", // or "mysql", "sqlite"
+	}),
+	emailAndPassword: {
+		enabled: true,
+		requireEmailVerification: false,
+	},
+	socialProviders: {
+		google: {
+			clientId: process.env.GOOGLE_CLIENT_ID!,
+			clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+		},
+	},
+	plugins: [openAPI()],
+});
