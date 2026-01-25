@@ -1,0 +1,1 @@
+ALTER TABLE "category" ADD COLUMN "slug" varchar(255);

@@ -15,6 +15,7 @@ import { Route as RootLayoutProductsRouteImport } from './routes/_rootLayout/pro
 import { Route as RootLayoutContactRouteImport } from './routes/_rootLayout/contact'
 import { Route as RootLayoutAboutRouteImport } from './routes/_rootLayout/about'
 import { Route as RootLayoutAuthRouteImport } from './routes/_rootLayout/_auth'
+import { Route as RootLayoutProfileIndexRouteImport } from './routes/_rootLayout/profile/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as RootLayoutAuthSignupRouteImport } from './routes/_rootLayout/_auth/signup'
 import { Route as RootLayoutAuthLoginRouteImport } from './routes/_rootLayout/_auth/login'
@@ -48,6 +49,11 @@ const RootLayoutAuthRoute = RootLayoutAuthRouteImport.update({
   id: '/_auth',
   getParentRoute: () => RootLayoutRoute,
 } as any)
+const RootLayoutProfileIndexRoute = RootLayoutProfileIndexRouteImport.update({
+  id: '/profile/',
+  path: '/profile/',
+  getParentRoute: () => RootLayoutRoute,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -79,6 +85,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof RootLayoutAuthLoginRoute
   '/signup': typeof RootLayoutAuthSignupRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/profile/': typeof RootLayoutProfileIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -89,6 +96,7 @@ export interface FileRoutesByTo {
   '/login': typeof RootLayoutAuthLoginRoute
   '/signup': typeof RootLayoutAuthSignupRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/profile': typeof RootLayoutProfileIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -102,6 +110,7 @@ export interface FileRoutesById {
   '/_rootLayout/_auth/login': typeof RootLayoutAuthLoginRoute
   '/_rootLayout/_auth/signup': typeof RootLayoutAuthSignupRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/_rootLayout/profile/': typeof RootLayoutProfileIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -114,6 +123,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/api/auth/$'
+    | '/profile/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -124,6 +134,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/api/auth/$'
+    | '/profile'
   id:
     | '__root__'
     | '/'
@@ -136,6 +147,7 @@ export interface FileRouteTypes {
     | '/_rootLayout/_auth/login'
     | '/_rootLayout/_auth/signup'
     | '/api/auth/$'
+    | '/_rootLayout/profile/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -186,6 +198,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof RootLayoutAuthRouteImport
+      parentRoute: typeof RootLayoutRoute
+    }
+    '/_rootLayout/profile/': {
+      id: '/_rootLayout/profile/'
+      path: '/profile'
+      fullPath: '/profile/'
+      preLoaderRoute: typeof RootLayoutProfileIndexRouteImport
       parentRoute: typeof RootLayoutRoute
     }
     '/api/auth/$': {
@@ -240,6 +259,7 @@ interface RootLayoutRouteChildren {
   RootLayoutAboutRoute: typeof RootLayoutAboutRoute
   RootLayoutContactRoute: typeof RootLayoutContactRoute
   RootLayoutProductsRoute: typeof RootLayoutProductsRoute
+  RootLayoutProfileIndexRoute: typeof RootLayoutProfileIndexRoute
 }
 
 const RootLayoutRouteChildren: RootLayoutRouteChildren = {
@@ -247,6 +267,7 @@ const RootLayoutRouteChildren: RootLayoutRouteChildren = {
   RootLayoutAboutRoute: RootLayoutAboutRoute,
   RootLayoutContactRoute: RootLayoutContactRoute,
   RootLayoutProductsRoute: RootLayoutProductsRoute,
+  RootLayoutProfileIndexRoute: RootLayoutProfileIndexRoute,
 }
 
 const RootLayoutRouteWithChildren = RootLayoutRoute._addFileChildren(
