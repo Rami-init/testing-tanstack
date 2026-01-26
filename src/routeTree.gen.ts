@@ -11,12 +11,13 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as RootLayoutRouteImport } from './routes/_rootLayout'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as RootLayoutProductsRouteImport } from './routes/_rootLayout/products'
 import { Route as RootLayoutContactRouteImport } from './routes/_rootLayout/contact'
 import { Route as RootLayoutAboutRouteImport } from './routes/_rootLayout/about'
 import { Route as RootLayoutAuthRouteImport } from './routes/_rootLayout/_auth'
 import { Route as RootLayoutProfileIndexRouteImport } from './routes/_rootLayout/profile/index'
+import { Route as RootLayoutProductsIndexRouteImport } from './routes/_rootLayout/products/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as RootLayoutProductsIdRouteImport } from './routes/_rootLayout/products/$id'
 import { Route as RootLayoutAuthSignupRouteImport } from './routes/_rootLayout/_auth/signup'
 import { Route as RootLayoutAuthLoginRouteImport } from './routes/_rootLayout/_auth/login'
 import { Route as RootLayoutAuthForgetPasswordRouteImport } from './routes/_rootLayout/_auth/forget-password'
@@ -29,11 +30,6 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
-} as any)
-const RootLayoutProductsRoute = RootLayoutProductsRouteImport.update({
-  id: '/products',
-  path: '/products',
-  getParentRoute: () => RootLayoutRoute,
 } as any)
 const RootLayoutContactRoute = RootLayoutContactRouteImport.update({
   id: '/contact',
@@ -54,10 +50,20 @@ const RootLayoutProfileIndexRoute = RootLayoutProfileIndexRouteImport.update({
   path: '/profile/',
   getParentRoute: () => RootLayoutRoute,
 } as any)
+const RootLayoutProductsIndexRoute = RootLayoutProductsIndexRouteImport.update({
+  id: '/products/',
+  path: '/products/',
+  getParentRoute: () => RootLayoutRoute,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
+} as any)
+const RootLayoutProductsIdRoute = RootLayoutProductsIdRouteImport.update({
+  id: '/products/$id',
+  path: '/products/$id',
+  getParentRoute: () => RootLayoutRoute,
 } as any)
 const RootLayoutAuthSignupRoute = RootLayoutAuthSignupRouteImport.update({
   id: '/signup',
@@ -80,22 +86,24 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof RootLayoutAboutRoute
   '/contact': typeof RootLayoutContactRoute
-  '/products': typeof RootLayoutProductsRoute
   '/forget-password': typeof RootLayoutAuthForgetPasswordRoute
   '/login': typeof RootLayoutAuthLoginRoute
   '/signup': typeof RootLayoutAuthSignupRoute
+  '/products/$id': typeof RootLayoutProductsIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/products/': typeof RootLayoutProductsIndexRoute
   '/profile/': typeof RootLayoutProfileIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof RootLayoutAboutRoute
   '/contact': typeof RootLayoutContactRoute
-  '/products': typeof RootLayoutProductsRoute
   '/forget-password': typeof RootLayoutAuthForgetPasswordRoute
   '/login': typeof RootLayoutAuthLoginRoute
   '/signup': typeof RootLayoutAuthSignupRoute
+  '/products/$id': typeof RootLayoutProductsIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/products': typeof RootLayoutProductsIndexRoute
   '/profile': typeof RootLayoutProfileIndexRoute
 }
 export interface FileRoutesById {
@@ -105,11 +113,12 @@ export interface FileRoutesById {
   '/_rootLayout/_auth': typeof RootLayoutAuthRouteWithChildren
   '/_rootLayout/about': typeof RootLayoutAboutRoute
   '/_rootLayout/contact': typeof RootLayoutContactRoute
-  '/_rootLayout/products': typeof RootLayoutProductsRoute
   '/_rootLayout/_auth/forget-password': typeof RootLayoutAuthForgetPasswordRoute
   '/_rootLayout/_auth/login': typeof RootLayoutAuthLoginRoute
   '/_rootLayout/_auth/signup': typeof RootLayoutAuthSignupRoute
+  '/_rootLayout/products/$id': typeof RootLayoutProductsIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/_rootLayout/products/': typeof RootLayoutProductsIndexRoute
   '/_rootLayout/profile/': typeof RootLayoutProfileIndexRoute
 }
 export interface FileRouteTypes {
@@ -118,22 +127,24 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/contact'
-    | '/products'
     | '/forget-password'
     | '/login'
     | '/signup'
+    | '/products/$id'
     | '/api/auth/$'
+    | '/products/'
     | '/profile/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
     | '/contact'
-    | '/products'
     | '/forget-password'
     | '/login'
     | '/signup'
+    | '/products/$id'
     | '/api/auth/$'
+    | '/products'
     | '/profile'
   id:
     | '__root__'
@@ -142,11 +153,12 @@ export interface FileRouteTypes {
     | '/_rootLayout/_auth'
     | '/_rootLayout/about'
     | '/_rootLayout/contact'
-    | '/_rootLayout/products'
     | '/_rootLayout/_auth/forget-password'
     | '/_rootLayout/_auth/login'
     | '/_rootLayout/_auth/signup'
+    | '/_rootLayout/products/$id'
     | '/api/auth/$'
+    | '/_rootLayout/products/'
     | '/_rootLayout/profile/'
   fileRoutesById: FileRoutesById
 }
@@ -171,13 +183,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/_rootLayout/products': {
-      id: '/_rootLayout/products'
-      path: '/products'
-      fullPath: '/products'
-      preLoaderRoute: typeof RootLayoutProductsRouteImport
-      parentRoute: typeof RootLayoutRoute
     }
     '/_rootLayout/contact': {
       id: '/_rootLayout/contact'
@@ -207,12 +212,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RootLayoutProfileIndexRouteImport
       parentRoute: typeof RootLayoutRoute
     }
+    '/_rootLayout/products/': {
+      id: '/_rootLayout/products/'
+      path: '/products'
+      fullPath: '/products/'
+      preLoaderRoute: typeof RootLayoutProductsIndexRouteImport
+      parentRoute: typeof RootLayoutRoute
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
       fullPath: '/api/auth/$'
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_rootLayout/products/$id': {
+      id: '/_rootLayout/products/$id'
+      path: '/products/$id'
+      fullPath: '/products/$id'
+      preLoaderRoute: typeof RootLayoutProductsIdRouteImport
+      parentRoute: typeof RootLayoutRoute
     }
     '/_rootLayout/_auth/signup': {
       id: '/_rootLayout/_auth/signup'
@@ -258,7 +277,8 @@ interface RootLayoutRouteChildren {
   RootLayoutAuthRoute: typeof RootLayoutAuthRouteWithChildren
   RootLayoutAboutRoute: typeof RootLayoutAboutRoute
   RootLayoutContactRoute: typeof RootLayoutContactRoute
-  RootLayoutProductsRoute: typeof RootLayoutProductsRoute
+  RootLayoutProductsIdRoute: typeof RootLayoutProductsIdRoute
+  RootLayoutProductsIndexRoute: typeof RootLayoutProductsIndexRoute
   RootLayoutProfileIndexRoute: typeof RootLayoutProfileIndexRoute
 }
 
@@ -266,7 +286,8 @@ const RootLayoutRouteChildren: RootLayoutRouteChildren = {
   RootLayoutAuthRoute: RootLayoutAuthRouteWithChildren,
   RootLayoutAboutRoute: RootLayoutAboutRoute,
   RootLayoutContactRoute: RootLayoutContactRoute,
-  RootLayoutProductsRoute: RootLayoutProductsRoute,
+  RootLayoutProductsIdRoute: RootLayoutProductsIdRoute,
+  RootLayoutProductsIndexRoute: RootLayoutProductsIndexRoute,
   RootLayoutProfileIndexRoute: RootLayoutProfileIndexRoute,
 }
 

@@ -95,6 +95,9 @@ importers:
       react-hook-form:
         specifier: ^7.71.1
         version: 7.71.1(react@19.2.3)
+      serpapi:
+        specifier: ^2.2.1
+        version: 2.2.1
       sonner:
         specifier: ^2.0.7
         version: 2.0.7(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -4995,6 +4998,9 @@ packages:
   seroval@1.5.0:
     resolution: {integrity: sha512-OE4cvmJ1uSPrKorFIH9/w/Qwuvi/IMcGbv5RKgcJ/zjA/IohDLU6SVaxFN9FwajbP7nsX0dQqMDes1whk3y+yw==}
     engines: {node: '>=10'}
+
+  serpapi@2.2.1:
+    resolution: {integrity: sha512-1HXXaIwDmYueFPauAggIkzozMi5P/a4/yRUxB8Z1kad0VQE/7ohf9a6xRQ99aXR252itDChfmJUfBdCA4phCYA==}
 
   set-cookie-parser@2.7.2:
     resolution: {integrity: sha512-oeM1lpU/UvhTxw+g3cIfxXHyJRc/uidd3yK1P242gzHds0udQBYzs3y8j4gCCW+ZJ7ad0yctld8RYO+bdurlvw==}
@@ -10559,6 +10565,8 @@ snapshots:
       seroval: 1.5.0
 
   seroval@1.5.0: {}
+
+  serpapi@2.2.1: {}
 
   set-cookie-parser@2.7.2: {}
 

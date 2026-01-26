@@ -1,16 +1,13 @@
 import { queryOptions } from '@tanstack/react-query'
 import { createServerFn } from '@tanstack/react-start'
 import type { InferSelectModel } from 'drizzle-orm'
-import { db } from '@/db'
 import { category } from '@/db/schema'
-import { AwaitedPromise } from '@/lib/utils'
+import { db } from '@/db'
 
 export const fetchCategories = createServerFn({
   method: 'GET',
 }).handler(async () => {
   const categories = await db.select().from(category)
-  await AwaitedPromise()
-  console.log('Categories:', categories)
   return categories
 })
 export type SelectCategory = InferSelectModel<typeof category>
