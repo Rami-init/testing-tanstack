@@ -7,7 +7,7 @@ export const Route = createFileRoute('/_rootLayout/_auth')({
 
 function RouteComponent() {
   return (
-    <div className="flex-1 gap-8 flex justify-between items-center container mx-auto min-h-svh mt-16">
+    <div className="flex-1 gap-8 flex justify-between items-center container mx-auto min-h-svh">
       <img src={LoginThumb} width={500} height={500} alt="Login Thumbnail" />
       <Outlet />
     </div>

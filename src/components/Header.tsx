@@ -4,6 +4,12 @@ import { Separator } from './ui/separator'
 import { cn } from '@/lib/utils'
 import { authClient } from '@/lib/auth-client'
 
+const linksList = [
+  { name: 'Home', to: '/' },
+  { name: 'Products', to: '/products' },
+  { name: 'About', to: '/about' },
+  { name: 'Contact', to: '/contact' },
+]
 const Header = () => {
   return (
     <header className="flex items-center justify-between fixed bg-background w-full top-0 left-0 right-0 h-16 shadow-md z-10">
@@ -19,12 +25,11 @@ const Header = () => {
           <h1 className="text-base font-medium text-heading">ex-iphones</h1>
         </Link>
         <ul className="flex text-heading font-bold text-base h-full">
-          <LinkItem to="/">Home</LinkItem>
-          <LinkItem to="/products">Products</LinkItem>
-
-          <LinkItem to="/about">About</LinkItem>
-
-          <LinkItem to="/contact">Contact</LinkItem>
+          {linksList.map((link) => (
+            <LinkItem key={link.to} to={link.to}>
+              {link.name}
+            </LinkItem>
+          ))}
         </ul>
         <LoginLink />
       </div>
@@ -78,9 +83,12 @@ const LinkItem = ({
   <Link
     to={to}
     className={cn(
-      'border-b-2 border-transparent hover:border-current px-2 h-full flex items-center hover:text-primary transition cursor-pointer',
+      'border-b-2 border-transparent hover:border-current px-2 h-full flex items-center hover:text-primary transition cursor-pointer duration-300',
       className,
     )}
+    activeProps={{
+      className: 'border-b-2 border-primary! text-primary',
+    }}
   >
     {children}
   </Link>

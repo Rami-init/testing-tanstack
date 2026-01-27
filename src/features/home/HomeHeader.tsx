@@ -55,6 +55,9 @@ const LinkItem = ({
       'border-b-2 border-transparent hover:border-current px-2 h-full flex items-center hover:text-primary transition cursor-pointer',
       className,
     )}
+    activeProps={{
+      className: 'border-b-2 border-primary! text-primary',
+    }}
   >
     {children}
   </Link>
