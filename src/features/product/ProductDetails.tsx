@@ -13,6 +13,7 @@ import {
   InputGroupInput,
 } from '@/components/ui/input-group'
 import { Rating } from '@/components/ui/rating'
+import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
 
 const ProductDetails = () => {
@@ -20,7 +21,7 @@ const ProductDetails = () => {
     <section className="flex flex-col gap-2.5 col-span-2">
       <div className="flex gap-2.5 items-center w-full">
         <Rating value={4} readOnly />
-        <p className="font-bold text-sm text-foreground">4.0 Star Rating</p>
+        <p className="font-medium text-sm text-foreground">4.0 Star Rating</p>
         <span className="text-sm text-gray-500">({100}) reviews</span>
       </div>
       <h1 className="text-xl text-foreground font-medium">
@@ -46,7 +47,8 @@ const ProductDetails = () => {
           10% OFF
         </span>
       </div>
-      <div className="flex flex-col gap-4 mt-8">
+      <Separator className="my-2" />
+      <div className="flex flex-col gap-4">
         <ProductSpecification title="Memory" content="16 GB Unified Memory" />
         <ProductSpecification title="Storage" content="1 TB SSD Storage" />
         <ProductSpecification
@@ -120,9 +122,9 @@ const ProductSpecification = ({
   content: string
 }) => {
   return (
-    <section className="flex flex-col gap-2 border border-border rounded-lg py-2 px-3">
+    <section className="flex flex-col gap-2 py-1">
       <h2 className="text-muted-foreground font-normal text-sm ">{title}</h2>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 bg-white p-2 rounded-lg border-border">
         <p className="text-foreground text-lg w-full">{content}</p>
         <span className="text-muted-foreground">
           <ChevronDownIcon />

@@ -31,7 +31,7 @@ const ProductView = () => {
   }, [api])
   return (
     <section className="col-span-3  flex flex-col gap-8">
-      <div className="w-full h-100 flex items-center justify-center border border-gray-200 p-4 rounded-lg transition-transform duration-500">
+      <div className="w-full h-126 flex items-center justify-center border bg-white border-gray-200 p-4 rounded-lg transition-transform duration-500">
         <img
           src={imageIndex}
           alt="Main Product Image"
@@ -51,7 +51,7 @@ const ProductView = () => {
               >
                 <Card
                   className={cn(
-                    'h-24 w-24 border p-0 hover:border-primary shadow-md cursor-pointer',
+                    'h-24 w-24 border p-0 hover:border-primary shadow-none cursor-pointer',
                     imageIndex === image ? 'border-primary' : 'border-gray-200',
                   )}
                 >

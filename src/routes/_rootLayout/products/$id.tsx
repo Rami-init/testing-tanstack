@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import ProductDescription from '@/features/product/ProductDescription'
 import ProductDetails from '@/features/product/ProductDetails'
 import ProductReviews from '@/features/product/ProductReviews'
@@ -15,9 +16,32 @@ function RouteComponent() {
         <ProductView />
         <ProductDetails />
       </section>
-      <section className="flex flex-col gap-4 rounded-2xl border p-4 border-gray-200">
-        <ProductDescription />
-        <ProductReviews />
+      <section className="flex flex-col gap-4 rounded-2xl border p-6 border-gray-200 bg-white">
+        <Tabs defaultValue="Description">
+          <TabsList
+            variant="line"
+            className="w-fit mb-4 justify-center mx-auto"
+          >
+            <TabsTrigger
+              value="Description"
+              className="uppercase data-[state=active]:text-primary data-[state=active]:bg-gray-100 font-bold text-base"
+            >
+              Description
+            </TabsTrigger>
+            <TabsTrigger
+              value="Review"
+              className="uppercase data-[state=active]:text-primary data-[state=active]:bg-gray-100 font-bold text-base"
+            >
+              Reviews
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="Description">
+            <ProductDescription />
+          </TabsContent>
+          <TabsContent value="Review">
+            <ProductReviews />
+          </TabsContent>
+        </Tabs>
       </section>
     </main>
   )
