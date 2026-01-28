@@ -1,10 +1,14 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { fetchProductsQueryOptions } from '@/data/products'
 import CategoriesFilter from '@/features/products/CategoriesFilter'
 import NavFilter from '@/features/products/NavFilter'
 import Products from '@/features/products/Products'
 
 export const Route = createFileRoute('/_rootLayout/products/')({
   component: ProductsPage,
+  loader: async ({ context }) => {
+    await context.queryClient.ensureQueryData(fetchProductsQueryOptions)
+  },
 })
 
 function ProductsPage() {

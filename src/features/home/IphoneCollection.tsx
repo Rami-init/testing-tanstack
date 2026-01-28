@@ -1,4 +1,5 @@
-import { ProductCard } from './PordcutCard'
+import { useQuery } from '@tanstack/react-query'
+import { ProductCard } from './ProductCard'
 import {
   Carousel,
   CarouselContent,
@@ -6,9 +7,20 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel'
-import { fakeDataIphoneProducts } from '@/lib/iphones-products'
+import { fetchProductByCategoryIdQueryOptions } from '@/data/products'
 
 const IphoneCollection = () => {
+  const {
+    data: iphoneProducts,
+    isLoading,
+    error,
+  } = useQuery(fetchProductByCategoryIdQueryOptions(2))
+  if (isLoading) {
+    return <div>Loading iPhone products...</div>
+  }
+  if (error) {
+    return <div>Error loading iPhone products: {error.message}</div>
+  }
   return (
     <section className="py-20 w-full px-4 md:px-8 lg:px-16 bg-white">
       <div className="flex flex-col items-center justify-center gap-25 container w-full mx-auto">
@@ -17,7 +29,7 @@ const IphoneCollection = () => {
         </h1>
         <Carousel className="w-full blur-lg/10">
           <CarouselContent className="-ml-1 ">
-            {fakeDataIphoneProducts.map((product) => (
+            {iphoneProducts?.map((product) => (
               <CarouselItem
                 key={product.id}
                 className="pl-1 md:basis-1/2 lg:basis-1/5"

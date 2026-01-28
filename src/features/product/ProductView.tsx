@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import type { CarouselApi } from '@/components/ui/carousel'
+import type { Product } from '@/db/schema'
 import { Card, CardContent } from '@/components/ui/card'
 import {
   Carousel,
@@ -8,19 +9,18 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel'
-import { fakeDataIphoneProducts } from '@/lib/iphones-products'
 import { cn } from '@/lib/utils'
 
-const ProductView = () => {
+const ProductView = ({ product }: { product: Product }) => {
   const [imageIndex, setImageIndex] = React.useState(
-    fakeDataIphoneProducts[0].images[0],
+    product.thumbnails?.[0] || '',
   )
   const [api, setApi] = React.useState<CarouselApi>()
   useEffect(() => {
     if (!api) return
     const onChange = () => {
       console.log('Selected snap index:', api.selectedScrollSnap())
-      setImageIndex(fakeDataIphoneProducts[0].images[api.selectedScrollSnap()])
+      setImageIndex(product.thumbnails?.[api.selectedScrollSnap()] || '')
     }
 
     api.on('select', onChange)
@@ -29,23 +29,23 @@ const ProductView = () => {
       api.off('select', onChange)
     }
   }, [api])
+  console.log('Rendering ProductView with product:', imageIndex)
   return (
     <section className="col-span-3  flex flex-col gap-8">
       <div className="w-full h-126 flex items-center justify-center border bg-white border-gray-200 p-4 rounded-lg transition-transform duration-500">
         <img
-          src={imageIndex}
+          src={imageIndex || product.thumbnail || ''}
           alt="Main Product Image"
           className="max-h-full object-contain hover:scale-105 transition-transform duration-500"
+          loading="lazy"
         />
       </div>
       <div className="px-12">
         <Carousel setApi={setApi} className="w-full xl:max-w-3xl">
           <CarouselContent>
-            {fakeDataIphoneProducts[0].images.map((image, index) => (
+            {product.thumbnails?.map((image, index) => (
               <CarouselItem
-                onClick={() =>
-                  setImageIndex(fakeDataIphoneProducts[0].images[index])
-                }
+                onClick={() => setImageIndex(image)}
                 key={index}
                 className="pl-4 basis-auto"
               >
@@ -55,11 +55,12 @@ const ProductView = () => {
                     imageIndex === image ? 'border-primary' : 'border-gray-200',
                   )}
                 >
-                  <CardContent className="flex aspect-square items-center justify-center p-0 relative overflow-hidden">
+                  <CardContent className="flex aspect-square items-center justify-center p-1.5 relative overflow-hidden">
                     <img
                       src={image}
                       alt={`Product Image ${index + 1}`}
-                      className="h-full w-full object-contain"
+                      className="max-h-full max-w-full object-contain"
+                      loading="lazy"
                     />
                   </CardContent>
                 </Card>

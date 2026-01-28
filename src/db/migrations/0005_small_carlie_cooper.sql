@@ -1,0 +1,1 @@
+ALTER TABLE "product_review" ALTER COLUMN "helpful" SET DATA TYPE text;

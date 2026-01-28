@@ -1,4 +1,5 @@
-import { ProductCard } from './PordcutCard'
+import { useQuery } from '@tanstack/react-query'
+import { ProductCard } from './ProductCard'
 import {
   Carousel,
   CarouselContent,
@@ -6,14 +7,25 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel'
-import { fakeDataIphoneProducts } from '@/lib/iphones-products'
+import { fetchProductByCategoryIdQueryOptions } from '@/data/products'
 
 const AppleWatchProducts = () => {
+  const {
+    data: appleWatchProducts,
+    isLoading,
+    error,
+  } = useQuery(fetchProductByCategoryIdQueryOptions(4))
+  if (isLoading) {
+    return <div>Loading Apple Watch products...</div>
+  }
+  if (error) {
+    return <div>Error loading Apple Watch products: {error.message}</div>
+  }
   return (
     <div className="container mx-auto">
       <Carousel className="w-full blur-lg/10">
         <CarouselContent className="-ml-1 ">
-          {fakeDataIphoneProducts.map((product) => (
+          {appleWatchProducts?.map((product) => (
             <CarouselItem
               key={product.id}
               className="pl-1 md:basis-1/2 lg:basis-1/5"

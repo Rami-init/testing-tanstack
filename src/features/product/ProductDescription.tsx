@@ -1,13 +1,23 @@
 import { AwardIcon, CreditCardIcon, HeadsetIcon, VanIcon } from 'lucide-react'
+import type { Product } from '@/db/schema'
 import { Separator } from '@/components/ui/separator'
 
-const ProductDescription = () => {
+const ProductDescription = ({ product }: { product: Product }) => {
   return (
     <div className="grid grid-cols-2 gap-4">
-      <Description
-        title="Overview"
-        content="Experience the pinnacle of performance with the Apple MacBook Pro 16-inch M1 Max. Engineered for professionals, this laptop combines cutting-edge technology with sleek design to deliver unparalleled power and efficiency. Whether you're a creative professional, developer, or business user, the MacBook Pro M1 Max is built to handle your most demanding tasks with ease."
-      />
+      <div className="flex flex-col gap-2 pr-4">
+        <h3 className="text-foreground font-semibold text-base">Overview</h3>
+        {product.description ? (
+          product.description.map((desc, index) => (
+            <p key={index} className="text-sm text-heading pb-3">
+              {desc}
+            </p>
+          ))
+        ) : (
+          <p className="text-sm text-heading">No description available.</p>
+        )}
+        <p className="text-sm text-heading"></p>
+      </div>
       <div className="flex  gap-2 ">
         <ShippingInfo />
         <Separator orientation="vertical" className="h-auto mx-auto" />

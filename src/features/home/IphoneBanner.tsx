@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router'
 import ThreeIphoneImage from '@/assets/three-iphone.png'
 import { Button } from '@/components/ui/button'
 
@@ -10,11 +11,16 @@ const IphoneBanner = () => {
           from $699.00 or $29.12/mo. for 24 mo. before trade‑in, plus tax.{' '}
         </p>
         <div className="flex items-center gap-4">
-          <Button size="lg" className="px-8">
-            Buy
+          <Button size="lg" className="px-8" asChild>
+            <Link to="/products">Buy</Link>
           </Button>
-          <Button variant="link" size="lg" className="px-8 font-bold text-lg">
-            Learn more
+          <Button
+            variant="link"
+            size="lg"
+            className="px-8 font-bold text-lg"
+            asChild
+          >
+            <Link to="/about">Learn More</Link>
           </Button>
         </div>
       </div>

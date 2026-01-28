@@ -1,4 +1,6 @@
+import { relations } from 'drizzle-orm'
 import { integer, pgTable, text, timestamp, varchar } from 'drizzle-orm/pg-core'
+import { product } from './product.schema'
 
 export const category = pgTable('category', {
   id: integer('id')
@@ -14,3 +16,12 @@ export const category = pgTable('category', {
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull(),
 })
+
+// Relations
+export const categoryRelations = relations(category, ({ many }) => ({
+  products: many(product),
+}))
+
+// Types
+export type Category = typeof category.$inferSelect
+export type NewCategory = typeof category.$inferInsert
