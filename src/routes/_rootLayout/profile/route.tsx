@@ -65,7 +65,7 @@ const routes = [
 ]
 function RouteComponent() {
   return (
-    <div className="flex-1 gap-8 flex justify-between container mx-auto my-12">
+    <div className="flex-1 gap-8 flex container mx-auto my-12">
       <aside className="flex flex-col rounded-lg border py-4 bg-white border-gray-300 w-1/5 h-fit">
         {routes.map((route) => (
           <Link
