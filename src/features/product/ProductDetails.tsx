@@ -1,11 +1,13 @@
 import { useNavigate } from '@tanstack/react-router'
 import {
   ChevronDownIcon,
+  HeartPlus,
   MinusIcon,
   PlusIcon,
   ShoppingBasketIcon,
   ShoppingCart,
 } from 'lucide-react'
+
 import { motion } from 'motion/react'
 import { useState } from 'react'
 import type { ProductWithRelations } from '@/db/schema'
@@ -20,9 +22,11 @@ import { Rating } from '@/components/ui/rating'
 import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
 import { useCartStore } from '@/store/cart'
+import { useWishlistStore } from '@/store/whishlist'
 
 const ProductDetails = ({ product }: { product: ProductWithRelations }) => {
   const addItemToCart = useCartStore((state) => state.addItem)
+  const { toggleItem, isExisting } = useWishlistStore((state) => state)
   const navigate = useNavigate()
   const [quantity, setQuantity] = useState(1)
   const [addToCartClicked, setAddToCartClicked] = useState(false)
@@ -43,7 +47,9 @@ const ProductDetails = ({ product }: { product: ProductWithRelations }) => {
     setAddToCartClicked(true)
     setTimeout(() => setAddToCartClicked(false), 600)
   }
-
+  const handleAddToWishlist = () => {
+    toggleItem(product)
+  }
   const handleBuyNow = () => {
     addItemToCart(product, quantity)
     setBuyNowClicked(true)
@@ -224,24 +230,62 @@ const ProductDetails = ({ product }: { product: ProductWithRelations }) => {
             </Button>
           </motion.div>
         </div>
-        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-          <Button className="h-10 font-bold w-full" onClick={handleBuyNow}>
-            <motion.div
-              animate={
-                buyNowClicked
-                  ? {
-                      scale: [1, 1.5, 0.8, 1.2, 1],
-                      rotate: [0, 360],
-                    }
-                  : {}
-              }
-              transition={{ duration: 0.6, ease: 'easeInOut' }}
+        <div className="flex items-center gap-2.5">
+          <motion.div
+            className="flex-1"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <Button
+              className="h-10 font-bold w-full flex-1"
+              onClick={handleBuyNow}
             >
-              <ShoppingBasketIcon />
-            </motion.div>
-            <span className="text-base">Buy Now</span>
-          </Button>
-        </motion.div>
+              <motion.div
+                animate={
+                  buyNowClicked
+                    ? {
+                        scale: [1, 1.5, 0.8, 1.2, 1],
+                        rotate: [0, 360],
+                      }
+                    : {}
+                }
+                transition={{ duration: 0.6, ease: 'easeInOut' }}
+              >
+                <ShoppingBasketIcon />
+              </motion.div>
+              <span className="text-base">Buy Now</span>
+            </Button>
+          </motion.div>
+          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            <Button
+              className={cn(
+                'h-10 font-bold w-full',
+                isExisting(product.id)
+                  ? 'bg-green-600 text-white hover:bg-green-700 border-green-700'
+                  : 'text-primary border-primary hover:bg-primary/10 hover:text-primary',
+              )}
+              variant={isExisting(product.id) ? 'default' : 'outline'}
+              onClick={handleAddToWishlist}
+            >
+              <motion.div
+                animate={
+                  isExisting(product.id)
+                    ? {
+                        scale: [1, 1.5, 0.8, 1.2, 1],
+                        rotate: [0, 360],
+                      }
+                    : {
+                        scale: 1,
+                        rotate: 0,
+                      }
+                }
+                transition={{ duration: 0.6, ease: 'easeInOut' }}
+              >
+                <HeartPlus />
+              </motion.div>
+            </Button>
+          </motion.div>
+        </div>
       </div>
     </section>
   )

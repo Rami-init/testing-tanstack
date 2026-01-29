@@ -2,7 +2,7 @@ import { Link } from '@tanstack/react-router'
 import { SearchIcon } from 'lucide-react'
 import { motion } from 'motion/react'
 import TwoIphone from '@/assets/two-iphone.png'
-import { LoginLink } from '@/components/Header'
+import { LoginLink } from '@/components/CartLink'
 import {
   InputGroup,
   InputGroupAddon,

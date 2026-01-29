@@ -39,13 +39,13 @@ const routes = [
     icon: <MapPin />,
   },
   {
-    link: '/shopping-cart',
+    link: '/products/cart',
     label: 'Shopping Cart',
     id: 'shopping-cart',
     icon: <ShoppingCart />,
   },
   {
-    link: '/wishlist',
+    link: '/profile/wishlist',
     label: 'Wishlist',
     id: 'wishlist',
     icon: <Heart />,
@@ -65,8 +65,8 @@ const routes = [
 ]
 function RouteComponent() {
   return (
-    <div className="flex-1 gap-8 flex container mx-auto my-12">
-      <aside className="flex flex-col rounded-lg border py-4 bg-white border-gray-300 w-1/5 h-fit">
+    <div className="flex-1 gap-8 flex container mx-auto my-12 overflow-hidden">
+      <aside className="flex flex-col rounded-lg border py-4 bg-white border-gray-300 min-w-62.5 h-fit">
         {routes.map((route) => (
           <Link
             key={route.id}

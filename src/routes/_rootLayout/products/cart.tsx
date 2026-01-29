@@ -174,9 +174,16 @@ const CartItemCard = ({ product }: { product: CartItem }) => {
         alt="Product Image"
         className="w-20 h-20 object-contain rounded-lg"
       />
-      <h2 className="text-lg font-semibold text-foreground flex-1 truncate">
+
+      <Link
+        to="/products/$id"
+        params={{
+          id: String(product.id),
+        }}
+        className="text-lg font-semibold text-foreground truncate flex-1 hover:underline hover:text-primary"
+      >
         {product.title}
-      </h2>
+      </Link>
       <p className="text-foreground/80">Price: ${price.toFixed(2)}</p>
       <FieldSet className="w-full max-w-36">
         {' '}

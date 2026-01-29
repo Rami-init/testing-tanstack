@@ -17,6 +17,7 @@ import { Route as RootLayoutAuthRouteImport } from './routes/_rootLayout/_auth'
 import { Route as RootLayoutProfileRouteRouteImport } from './routes/_rootLayout/profile/route'
 import { Route as RootLayoutProductsIndexRouteImport } from './routes/_rootLayout/products/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as RootLayoutProfileWishlistRouteImport } from './routes/_rootLayout/profile/wishlist'
 import { Route as RootLayoutProfileOverviewRouteImport } from './routes/_rootLayout/profile/overview'
 import { Route as RootLayoutProfileAccountRouteImport } from './routes/_rootLayout/profile/account'
 import { Route as RootLayoutProductsCartRouteImport } from './routes/_rootLayout/products/cart'
@@ -63,6 +64,12 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RootLayoutProfileWishlistRoute =
+  RootLayoutProfileWishlistRouteImport.update({
+    id: '/wishlist',
+    path: '/wishlist',
+    getParentRoute: () => RootLayoutProfileRouteRoute,
+  } as any)
 const RootLayoutProfileOverviewRoute =
   RootLayoutProfileOverviewRouteImport.update({
     id: '/overview',
@@ -114,6 +121,7 @@ export interface FileRoutesByFullPath {
   '/products/cart': typeof RootLayoutProductsCartRoute
   '/profile/account': typeof RootLayoutProfileAccountRoute
   '/profile/overview': typeof RootLayoutProfileOverviewRoute
+  '/profile/wishlist': typeof RootLayoutProfileWishlistRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/products/': typeof RootLayoutProductsIndexRoute
 }
@@ -129,6 +137,7 @@ export interface FileRoutesByTo {
   '/products/cart': typeof RootLayoutProductsCartRoute
   '/profile/account': typeof RootLayoutProfileAccountRoute
   '/profile/overview': typeof RootLayoutProfileOverviewRoute
+  '/profile/wishlist': typeof RootLayoutProfileWishlistRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/products': typeof RootLayoutProductsIndexRoute
 }
@@ -147,6 +156,7 @@ export interface FileRoutesById {
   '/_rootLayout/products/cart': typeof RootLayoutProductsCartRoute
   '/_rootLayout/profile/account': typeof RootLayoutProfileAccountRoute
   '/_rootLayout/profile/overview': typeof RootLayoutProfileOverviewRoute
+  '/_rootLayout/profile/wishlist': typeof RootLayoutProfileWishlistRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/_rootLayout/products/': typeof RootLayoutProductsIndexRoute
 }
@@ -164,6 +174,7 @@ export interface FileRouteTypes {
     | '/products/cart'
     | '/profile/account'
     | '/profile/overview'
+    | '/profile/wishlist'
     | '/api/auth/$'
     | '/products/'
   fileRoutesByTo: FileRoutesByTo
@@ -179,6 +190,7 @@ export interface FileRouteTypes {
     | '/products/cart'
     | '/profile/account'
     | '/profile/overview'
+    | '/profile/wishlist'
     | '/api/auth/$'
     | '/products'
   id:
@@ -196,6 +208,7 @@ export interface FileRouteTypes {
     | '/_rootLayout/products/cart'
     | '/_rootLayout/profile/account'
     | '/_rootLayout/profile/overview'
+    | '/_rootLayout/profile/wishlist'
     | '/api/auth/$'
     | '/_rootLayout/products/'
   fileRoutesById: FileRoutesById
@@ -264,6 +277,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_rootLayout/profile/wishlist': {
+      id: '/_rootLayout/profile/wishlist'
+      path: '/wishlist'
+      fullPath: '/profile/wishlist'
+      preLoaderRoute: typeof RootLayoutProfileWishlistRouteImport
+      parentRoute: typeof RootLayoutProfileRouteRoute
+    }
     '/_rootLayout/profile/overview': {
       id: '/_rootLayout/profile/overview'
       path: '/overview'
@@ -319,12 +339,14 @@ declare module '@tanstack/react-router' {
 interface RootLayoutProfileRouteRouteChildren {
   RootLayoutProfileAccountRoute: typeof RootLayoutProfileAccountRoute
   RootLayoutProfileOverviewRoute: typeof RootLayoutProfileOverviewRoute
+  RootLayoutProfileWishlistRoute: typeof RootLayoutProfileWishlistRoute
 }
 
 const RootLayoutProfileRouteRouteChildren: RootLayoutProfileRouteRouteChildren =
   {
     RootLayoutProfileAccountRoute: RootLayoutProfileAccountRoute,
     RootLayoutProfileOverviewRoute: RootLayoutProfileOverviewRoute,
+    RootLayoutProfileWishlistRoute: RootLayoutProfileWishlistRoute,
   }
 
 const RootLayoutProfileRouteRouteWithChildren =
