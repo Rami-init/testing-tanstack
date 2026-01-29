@@ -22,8 +22,8 @@ const routes = [
   },
   {
     link: '/profile/account',
-    label: 'Account Settings',
-    id: 'account-settings',
+    label: 'Account Details',
+    id: 'account-details',
     icon: <User />,
   },
   {

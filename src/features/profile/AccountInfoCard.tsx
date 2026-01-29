@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router'
+import type { ComponentType } from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -8,18 +9,27 @@ const AccountInfoCard = ({
   title,
   link,
   linkLabel,
+  icon: Icon,
 }: {
   title: string
   link: string
   linkLabel: string
+  icon?: ComponentType<React.SVGProps<SVGSVGElement>>
   children: React.ReactNode
 }) => {
   return (
-    <Card className="col-span-1 border-gray-300 bg-white">
+    <Card className="col-span-1 border-gray-300 bg-white transition-shadow hover:shadow-md">
       <CardHeader className="border-b [.border-b]:pb-3">
-        <CardTitle className="text-base font-normal uppercase text-foreground ">
-          {title}
-        </CardTitle>
+        <div className="flex items-center gap-3">
+          {Icon && (
+            <span className="flex size-10 items-center justify-center rounded-full bg-primary/10 text-primary">
+              <Icon className="size-5" />
+            </span>
+          )}
+          <CardTitle className="text-base font-normal uppercase text-foreground">
+            {title}
+          </CardTitle>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="flex flex-col gap-6">

@@ -12,13 +12,17 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as RootLayoutRouteImport } from './routes/_rootLayout'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as RootLayoutContactRouteImport } from './routes/_rootLayout/contact'
+import { Route as RootLayoutCheckoutRouteImport } from './routes/_rootLayout/checkout'
 import { Route as RootLayoutAboutRouteImport } from './routes/_rootLayout/about'
 import { Route as RootLayoutAuthRouteImport } from './routes/_rootLayout/_auth'
 import { Route as RootLayoutProfileRouteRouteImport } from './routes/_rootLayout/profile/route'
 import { Route as RootLayoutProductsIndexRouteImport } from './routes/_rootLayout/products/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as RootLayoutProfileWishlistRouteImport } from './routes/_rootLayout/profile/wishlist'
+import { Route as RootLayoutProfileTrackOrdersRouteImport } from './routes/_rootLayout/profile/track-orders'
 import { Route as RootLayoutProfileOverviewRouteImport } from './routes/_rootLayout/profile/overview'
+import { Route as RootLayoutProfileOrderHistoryRouteImport } from './routes/_rootLayout/profile/order-history'
+import { Route as RootLayoutProfileAddressRouteImport } from './routes/_rootLayout/profile/address'
 import { Route as RootLayoutProfileAccountRouteImport } from './routes/_rootLayout/profile/account'
 import { Route as RootLayoutProductsCartRouteImport } from './routes/_rootLayout/products/cart'
 import { Route as RootLayoutProductsIdRouteImport } from './routes/_rootLayout/products/$id'
@@ -38,6 +42,11 @@ const IndexRoute = IndexRouteImport.update({
 const RootLayoutContactRoute = RootLayoutContactRouteImport.update({
   id: '/contact',
   path: '/contact',
+  getParentRoute: () => RootLayoutRoute,
+} as any)
+const RootLayoutCheckoutRoute = RootLayoutCheckoutRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
   getParentRoute: () => RootLayoutRoute,
 } as any)
 const RootLayoutAboutRoute = RootLayoutAboutRouteImport.update({
@@ -70,10 +79,28 @@ const RootLayoutProfileWishlistRoute =
     path: '/wishlist',
     getParentRoute: () => RootLayoutProfileRouteRoute,
   } as any)
+const RootLayoutProfileTrackOrdersRoute =
+  RootLayoutProfileTrackOrdersRouteImport.update({
+    id: '/track-orders',
+    path: '/track-orders',
+    getParentRoute: () => RootLayoutProfileRouteRoute,
+  } as any)
 const RootLayoutProfileOverviewRoute =
   RootLayoutProfileOverviewRouteImport.update({
     id: '/overview',
     path: '/overview',
+    getParentRoute: () => RootLayoutProfileRouteRoute,
+  } as any)
+const RootLayoutProfileOrderHistoryRoute =
+  RootLayoutProfileOrderHistoryRouteImport.update({
+    id: '/order-history',
+    path: '/order-history',
+    getParentRoute: () => RootLayoutProfileRouteRoute,
+  } as any)
+const RootLayoutProfileAddressRoute =
+  RootLayoutProfileAddressRouteImport.update({
+    id: '/address',
+    path: '/address',
     getParentRoute: () => RootLayoutProfileRouteRoute,
   } as any)
 const RootLayoutProfileAccountRoute =
@@ -113,6 +140,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/profile': typeof RootLayoutProfileRouteRouteWithChildren
   '/about': typeof RootLayoutAboutRoute
+  '/checkout': typeof RootLayoutCheckoutRoute
   '/contact': typeof RootLayoutContactRoute
   '/forget-password': typeof RootLayoutAuthForgetPasswordRoute
   '/login': typeof RootLayoutAuthLoginRoute
@@ -120,7 +148,10 @@ export interface FileRoutesByFullPath {
   '/products/$id': typeof RootLayoutProductsIdRoute
   '/products/cart': typeof RootLayoutProductsCartRoute
   '/profile/account': typeof RootLayoutProfileAccountRoute
+  '/profile/address': typeof RootLayoutProfileAddressRoute
+  '/profile/order-history': typeof RootLayoutProfileOrderHistoryRoute
   '/profile/overview': typeof RootLayoutProfileOverviewRoute
+  '/profile/track-orders': typeof RootLayoutProfileTrackOrdersRoute
   '/profile/wishlist': typeof RootLayoutProfileWishlistRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/products/': typeof RootLayoutProductsIndexRoute
@@ -129,6 +160,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/profile': typeof RootLayoutProfileRouteRouteWithChildren
   '/about': typeof RootLayoutAboutRoute
+  '/checkout': typeof RootLayoutCheckoutRoute
   '/contact': typeof RootLayoutContactRoute
   '/forget-password': typeof RootLayoutAuthForgetPasswordRoute
   '/login': typeof RootLayoutAuthLoginRoute
@@ -136,7 +168,10 @@ export interface FileRoutesByTo {
   '/products/$id': typeof RootLayoutProductsIdRoute
   '/products/cart': typeof RootLayoutProductsCartRoute
   '/profile/account': typeof RootLayoutProfileAccountRoute
+  '/profile/address': typeof RootLayoutProfileAddressRoute
+  '/profile/order-history': typeof RootLayoutProfileOrderHistoryRoute
   '/profile/overview': typeof RootLayoutProfileOverviewRoute
+  '/profile/track-orders': typeof RootLayoutProfileTrackOrdersRoute
   '/profile/wishlist': typeof RootLayoutProfileWishlistRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/products': typeof RootLayoutProductsIndexRoute
@@ -148,6 +183,7 @@ export interface FileRoutesById {
   '/_rootLayout/profile': typeof RootLayoutProfileRouteRouteWithChildren
   '/_rootLayout/_auth': typeof RootLayoutAuthRouteWithChildren
   '/_rootLayout/about': typeof RootLayoutAboutRoute
+  '/_rootLayout/checkout': typeof RootLayoutCheckoutRoute
   '/_rootLayout/contact': typeof RootLayoutContactRoute
   '/_rootLayout/_auth/forget-password': typeof RootLayoutAuthForgetPasswordRoute
   '/_rootLayout/_auth/login': typeof RootLayoutAuthLoginRoute
@@ -155,7 +191,10 @@ export interface FileRoutesById {
   '/_rootLayout/products/$id': typeof RootLayoutProductsIdRoute
   '/_rootLayout/products/cart': typeof RootLayoutProductsCartRoute
   '/_rootLayout/profile/account': typeof RootLayoutProfileAccountRoute
+  '/_rootLayout/profile/address': typeof RootLayoutProfileAddressRoute
+  '/_rootLayout/profile/order-history': typeof RootLayoutProfileOrderHistoryRoute
   '/_rootLayout/profile/overview': typeof RootLayoutProfileOverviewRoute
+  '/_rootLayout/profile/track-orders': typeof RootLayoutProfileTrackOrdersRoute
   '/_rootLayout/profile/wishlist': typeof RootLayoutProfileWishlistRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/_rootLayout/products/': typeof RootLayoutProductsIndexRoute
@@ -166,6 +205,7 @@ export interface FileRouteTypes {
     | '/'
     | '/profile'
     | '/about'
+    | '/checkout'
     | '/contact'
     | '/forget-password'
     | '/login'
@@ -173,7 +213,10 @@ export interface FileRouteTypes {
     | '/products/$id'
     | '/products/cart'
     | '/profile/account'
+    | '/profile/address'
+    | '/profile/order-history'
     | '/profile/overview'
+    | '/profile/track-orders'
     | '/profile/wishlist'
     | '/api/auth/$'
     | '/products/'
@@ -182,6 +225,7 @@ export interface FileRouteTypes {
     | '/'
     | '/profile'
     | '/about'
+    | '/checkout'
     | '/contact'
     | '/forget-password'
     | '/login'
@@ -189,7 +233,10 @@ export interface FileRouteTypes {
     | '/products/$id'
     | '/products/cart'
     | '/profile/account'
+    | '/profile/address'
+    | '/profile/order-history'
     | '/profile/overview'
+    | '/profile/track-orders'
     | '/profile/wishlist'
     | '/api/auth/$'
     | '/products'
@@ -200,6 +247,7 @@ export interface FileRouteTypes {
     | '/_rootLayout/profile'
     | '/_rootLayout/_auth'
     | '/_rootLayout/about'
+    | '/_rootLayout/checkout'
     | '/_rootLayout/contact'
     | '/_rootLayout/_auth/forget-password'
     | '/_rootLayout/_auth/login'
@@ -207,7 +255,10 @@ export interface FileRouteTypes {
     | '/_rootLayout/products/$id'
     | '/_rootLayout/products/cart'
     | '/_rootLayout/profile/account'
+    | '/_rootLayout/profile/address'
+    | '/_rootLayout/profile/order-history'
     | '/_rootLayout/profile/overview'
+    | '/_rootLayout/profile/track-orders'
     | '/_rootLayout/profile/wishlist'
     | '/api/auth/$'
     | '/_rootLayout/products/'
@@ -240,6 +291,13 @@ declare module '@tanstack/react-router' {
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof RootLayoutContactRouteImport
+      parentRoute: typeof RootLayoutRoute
+    }
+    '/_rootLayout/checkout': {
+      id: '/_rootLayout/checkout'
+      path: '/checkout'
+      fullPath: '/checkout'
+      preLoaderRoute: typeof RootLayoutCheckoutRouteImport
       parentRoute: typeof RootLayoutRoute
     }
     '/_rootLayout/about': {
@@ -284,11 +342,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RootLayoutProfileWishlistRouteImport
       parentRoute: typeof RootLayoutProfileRouteRoute
     }
+    '/_rootLayout/profile/track-orders': {
+      id: '/_rootLayout/profile/track-orders'
+      path: '/track-orders'
+      fullPath: '/profile/track-orders'
+      preLoaderRoute: typeof RootLayoutProfileTrackOrdersRouteImport
+      parentRoute: typeof RootLayoutProfileRouteRoute
+    }
     '/_rootLayout/profile/overview': {
       id: '/_rootLayout/profile/overview'
       path: '/overview'
       fullPath: '/profile/overview'
       preLoaderRoute: typeof RootLayoutProfileOverviewRouteImport
+      parentRoute: typeof RootLayoutProfileRouteRoute
+    }
+    '/_rootLayout/profile/order-history': {
+      id: '/_rootLayout/profile/order-history'
+      path: '/order-history'
+      fullPath: '/profile/order-history'
+      preLoaderRoute: typeof RootLayoutProfileOrderHistoryRouteImport
+      parentRoute: typeof RootLayoutProfileRouteRoute
+    }
+    '/_rootLayout/profile/address': {
+      id: '/_rootLayout/profile/address'
+      path: '/address'
+      fullPath: '/profile/address'
+      preLoaderRoute: typeof RootLayoutProfileAddressRouteImport
       parentRoute: typeof RootLayoutProfileRouteRoute
     }
     '/_rootLayout/profile/account': {
@@ -338,14 +417,20 @@ declare module '@tanstack/react-router' {
 
 interface RootLayoutProfileRouteRouteChildren {
   RootLayoutProfileAccountRoute: typeof RootLayoutProfileAccountRoute
+  RootLayoutProfileAddressRoute: typeof RootLayoutProfileAddressRoute
+  RootLayoutProfileOrderHistoryRoute: typeof RootLayoutProfileOrderHistoryRoute
   RootLayoutProfileOverviewRoute: typeof RootLayoutProfileOverviewRoute
+  RootLayoutProfileTrackOrdersRoute: typeof RootLayoutProfileTrackOrdersRoute
   RootLayoutProfileWishlistRoute: typeof RootLayoutProfileWishlistRoute
 }
 
 const RootLayoutProfileRouteRouteChildren: RootLayoutProfileRouteRouteChildren =
   {
     RootLayoutProfileAccountRoute: RootLayoutProfileAccountRoute,
+    RootLayoutProfileAddressRoute: RootLayoutProfileAddressRoute,
+    RootLayoutProfileOrderHistoryRoute: RootLayoutProfileOrderHistoryRoute,
     RootLayoutProfileOverviewRoute: RootLayoutProfileOverviewRoute,
+    RootLayoutProfileTrackOrdersRoute: RootLayoutProfileTrackOrdersRoute,
     RootLayoutProfileWishlistRoute: RootLayoutProfileWishlistRoute,
   }
 
@@ -374,6 +459,7 @@ interface RootLayoutRouteChildren {
   RootLayoutProfileRouteRoute: typeof RootLayoutProfileRouteRouteWithChildren
   RootLayoutAuthRoute: typeof RootLayoutAuthRouteWithChildren
   RootLayoutAboutRoute: typeof RootLayoutAboutRoute
+  RootLayoutCheckoutRoute: typeof RootLayoutCheckoutRoute
   RootLayoutContactRoute: typeof RootLayoutContactRoute
   RootLayoutProductsIdRoute: typeof RootLayoutProductsIdRoute
   RootLayoutProductsCartRoute: typeof RootLayoutProductsCartRoute
@@ -384,6 +470,7 @@ const RootLayoutRouteChildren: RootLayoutRouteChildren = {
   RootLayoutProfileRouteRoute: RootLayoutProfileRouteRouteWithChildren,
   RootLayoutAuthRoute: RootLayoutAuthRouteWithChildren,
   RootLayoutAboutRoute: RootLayoutAboutRoute,
+  RootLayoutCheckoutRoute: RootLayoutCheckoutRoute,
   RootLayoutContactRoute: RootLayoutContactRoute,
   RootLayoutProductsIdRoute: RootLayoutProductsIdRoute,
   RootLayoutProductsCartRoute: RootLayoutProductsCartRoute,

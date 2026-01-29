@@ -1,4 +1,5 @@
 import { Link, createFileRoute } from '@tanstack/react-router'
+import { CreditCard, UserRound } from 'lucide-react'
 import PackageIcon from '@/assets/icons/PackageIcon'
 import ReceiptIcon from '@/assets/icons/ReceiptIcon'
 import RocketIcon from '@/assets/icons/rocketIcon'
@@ -6,7 +7,7 @@ import AccountInfoCard, {
   AccountInfoContent,
   AddressInfoContent,
 } from '@/features/profile/AccountInfoCard'
-import Statistic from '@/features/profile/statistic'
+import Statistic from '@/features/profile/Statistic'
 
 export const Route = createFileRoute('/_rootLayout/profile/overview')({
   component: RouteComponent,
@@ -15,7 +16,7 @@ export const Route = createFileRoute('/_rootLayout/profile/overview')({
 function RouteComponent() {
   return (
     <div className="flex flex-col gap-10 flex-1">
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <Statistic
           total={100}
           caption="Total Sales"
@@ -59,18 +60,20 @@ function RouteComponent() {
           .
         </p>
       </div>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <AccountInfoCard
           title="Account Info"
           link="/profile/account"
           linkLabel="Edit Account"
+          icon={UserRound}
         >
           <AccountInfoContent />
         </AccountInfoCard>
         <AccountInfoCard
           title="Billing Address"
-          link="/profile/wallet"
+          link="/profile/address"
           linkLabel="Edit Address"
+          icon={CreditCard}
         >
           <AddressInfoContent />
         </AccountInfoCard>

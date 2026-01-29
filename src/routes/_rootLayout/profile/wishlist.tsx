@@ -15,7 +15,7 @@ function RouteComponent() {
   const items = useWishlistStore((state) => state.items)
 
   return (
-    <main className="gap-8 py-12 container mx-auto flex-1">
+    <main className="container mx-auto flex-1">
       <section className="bg-white rounded-lg border border-gray-200 h-fit flex flex-col ">
         <h1 className="border-b border-gray-200 p-4 text-foreground text-lg font-semibold">
           Wishlist
