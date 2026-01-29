@@ -1,5 +1,5 @@
 import { format } from 'date-fns'
-import { ArrowDownCircleIcon, PenIcon } from 'lucide-react'
+import { ArrowDownCircleIcon, PenIcon, Sparkles, StarIcon } from 'lucide-react'
 import { toast } from 'sonner'
 import type { ProductWithRelations } from '@/db/schema'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -44,17 +44,25 @@ const ProductReviews = ({ product }: { product: ProductWithRelations }) => {
                 <span className="text-sm text-gray-500">
                   {format(new Date(review.createdAt), 'MMMM d, yyyy')}
                 </span>
-                <Separator orientation="vertical" className="h-5!" />
-
-                <Button variant="outline" size="sm" className="bg-transparent">
-                  Helpful
-                </Button>
               </div>
               <div>
                 <h3 className="text-foreground font-semibold text-base capitalize">
                   {review.title}
                 </h3>
                 <p className="text-foreground text-sm">{review.content}</p>
+              </div>
+              {review.helpful && (
+                <q className="italic text-sm text-gray-600">{review.helpful}</q>
+              )}
+              <div className="flex items-center gap-4 mt-2">
+                <Button variant="outline" size="sm" className="bg-transparent">
+                  Helpful
+                </Button>
+                <Separator orientation="vertical" className="h-7!" />
+
+                <Button variant="outline" size="sm" className="">
+                  Report
+                </Button>
               </div>
             </div>
           ))}
@@ -65,8 +73,8 @@ const ProductReviews = ({ product }: { product: ProductWithRelations }) => {
       </div>
       <div className="flex flex-col gap-4 col-span-2">
         <div>
-          <h2 className="text-foreground font-medium text-2xl">
-            Customer Reviews
+          <h2 className="text-foreground font-medium text-2xl inline-flex items-center gap-2">
+            <StarIcon /> Customer Reviews
           </h2>
           <div className="flex items-center gap-4 mt-2">
             <span className="text-4xl font-bold text-foreground">
@@ -89,8 +97,8 @@ const ProductReviews = ({ product }: { product: ProductWithRelations }) => {
           ))}
         </div>
         <div className="flex flex-col gap-2.5 mt-6">
-          <h3 className="text-foreground font-semibold text-base">
-            Customers Says
+          <h3 className="text-foreground font-semibold text-base inline-flex items-center gap-2">
+            <Sparkles className="text-primary/70 size-5" /> Customers Says
           </h3>
           <p className="text-sm text-heading">
             {product.customerSays ||

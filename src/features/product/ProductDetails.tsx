@@ -1,3 +1,4 @@
+import { useNavigate } from '@tanstack/react-router'
 import {
   ChevronDownIcon,
   MinusIcon,
@@ -5,6 +6,8 @@ import {
   ShoppingBasketIcon,
   ShoppingCart,
 } from 'lucide-react'
+import { motion } from 'motion/react'
+import { useState } from 'react'
 import type { ProductWithRelations } from '@/db/schema'
 import { Button } from '@/components/ui/button'
 import { FieldSet } from '@/components/ui/field'
@@ -16,8 +19,39 @@ import {
 import { Rating } from '@/components/ui/rating'
 import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
+import { useCartStore } from '@/store/cart'
 
 const ProductDetails = ({ product }: { product: ProductWithRelations }) => {
+  const addItemToCart = useCartStore((state) => state.addItem)
+  const navigate = useNavigate()
+  const [quantity, setQuantity] = useState(1)
+  const [addToCartClicked, setAddToCartClicked] = useState(false)
+  const [buyNowClicked, setBuyNowClicked] = useState(false)
+
+  const handleQuantityChange = (value: number) => {
+    if (value < 1) {
+      setQuantity(1)
+    } else if (value > 99) {
+      setQuantity(99)
+    } else {
+      setQuantity(value)
+    }
+  }
+
+  const handleAddToCart = () => {
+    addItemToCart(product, quantity)
+    setAddToCartClicked(true)
+    setTimeout(() => setAddToCartClicked(false), 600)
+  }
+
+  const handleBuyNow = () => {
+    addItemToCart(product, quantity)
+    setBuyNowClicked(true)
+    setTimeout(() => {
+      setBuyNowClicked(false)
+      navigate({ from: '/products/$id', to: '/products/cart' })
+    }, 600)
+  }
   const oldPrice = product.extractedPrice
     ? (Number(product.extractedPrice) + 78).toFixed(2)
     : null
@@ -118,38 +152,96 @@ const ProductDetails = ({ product }: { product: ProductWithRelations }) => {
             {' '}
             <InputGroup className="bg-white border-gray-300 h-12">
               <InputGroupAddon align="inline-start">
-                <Button variant="ghost" className="p-0 m-0">
+                <Button
+                  variant="ghost"
+                  className="p-0 m-0"
+                  onClick={() => handleQuantityChange(quantity - 1)}
+                >
                   <MinusIcon />
                 </Button>
               </InputGroupAddon>
-              <InputGroupInput
-                id="inline-end-input"
-                type="number"
-                placeholder="Quantity"
-                min={1}
-                defaultValue={1}
-                max={99}
-                className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-              />
+              <motion.div
+                key={`quantity-${quantity}`}
+                initial={{ scale: 1.2, opacity: 0.5 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{
+                  type: 'spring',
+                  stiffness: 500,
+                  damping: 25,
+                  duration: 0.3,
+                }}
+                className="flex-1"
+              >
+                <InputGroupInput
+                  id="inline-end-input"
+                  type="number"
+                  placeholder="Quantity"
+                  value={quantity}
+                  onChange={(e) => handleQuantityChange(Number(e.target.value))}
+                  min={1}
+                  defaultValue={1}
+                  max={99}
+                  className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                />
+              </motion.div>
               <InputGroupAddon align="inline-end">
-                <Button variant="ghost" className="p-0 m-0">
+                <Button
+                  variant="ghost"
+                  className="p-0 m-0"
+                  onClick={() => handleQuantityChange(quantity + 1)}
+                >
                   <PlusIcon />
                 </Button>
               </InputGroupAddon>
             </InputGroup>
           </FieldSet>
-          <Button
-            className="h-12 text-primary border-primary hover:bg-primary/10 hover:text-primary font-bold flex-1"
-            variant="outline"
+          <motion.div
+            className="flex-1"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
           >
-            <ShoppingCart />
-            <span className="text-base">Add to Cart</span>
-          </Button>
+            <Button
+              className="h-12 text-primary border-primary hover:bg-primary/10 hover:text-primary font-bold w-full"
+              variant="outline"
+              onClick={handleAddToCart}
+            >
+              <motion.div
+                animate={
+                  addToCartClicked
+                    ? {
+                        y: [-50, 0],
+                        opacity: [0, 1],
+                        rotate: [180, 0],
+                        scale: [0.5, 1.2, 1],
+                      }
+                    : {}
+                }
+                transition={{ duration: 0.6, ease: 'easeOut' }}
+              >
+                <ShoppingCart />
+              </motion.div>
+              <span className="text-base">Add to Cart</span>
+            </Button>
+          </motion.div>
         </div>
-        <Button className="h-10 font-bold">
-          <ShoppingBasketIcon />
-          <span className="text-base">Buy Now</span>
-        </Button>
+        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+          <Button className="h-10 font-bold w-full" onClick={handleBuyNow}>
+            <motion.div
+              animate={
+                buyNowClicked
+                  ? {
+                      scale: [1, 1.5, 0.8, 1.2, 1],
+                      rotate: [0, 360],
+                    }
+                  : {}
+              }
+              transition={{ duration: 0.6, ease: 'easeInOut' }}
+            >
+              <ShoppingBasketIcon />
+            </motion.div>
+            <span className="text-base">Buy Now</span>
+          </Button>
+        </motion.div>
       </div>
     </section>
   )

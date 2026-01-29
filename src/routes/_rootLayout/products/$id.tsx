@@ -27,22 +27,22 @@ function RouteComponent() {
         <ProductDetails product={productQuery.data} />
       </section>
       <section className="flex flex-col gap-4 rounded-2xl border p-6 border-gray-200 bg-white">
-        <Tabs defaultValue="Description">
+        <Tabs defaultValue="Reviews">
           <TabsList
             variant="line"
             className="w-fit mb-4 justify-center mx-auto"
           >
             <TabsTrigger
-              value="Description"
-              className="uppercase data-[state=active]:text-primary data-[state=active]:bg-gray-100 font-bold text-base"
-            >
-              Description
-            </TabsTrigger>
-            <TabsTrigger
               value="Review"
               className="uppercase data-[state=active]:text-primary data-[state=active]:bg-gray-100 font-bold text-base"
             >
               Reviews
+            </TabsTrigger>
+            <TabsTrigger
+              value="Description"
+              className="uppercase data-[state=active]:text-primary data-[state=active]:bg-gray-100 font-bold text-base"
+            >
+              Description
             </TabsTrigger>
           </TabsList>
           <TabsContent value="Description">
