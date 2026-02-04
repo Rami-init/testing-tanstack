@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Link, useNavigate } from '@tanstack/react-router'
+import { Link, useNavigate, useSearch } from '@tanstack/react-router'
 import { MailIcon } from 'lucide-react'
 import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -27,6 +27,8 @@ import { loginSchema } from '@/schema/login'
 
 export const LoginForm = () => {
   const navigate = useNavigate()
+  const search = useSearch({ strict: false })
+  const redirectTo = (search as any).redirect || '/'
   const {
     handleSubmit,
     control,
@@ -47,7 +49,7 @@ export const LoginForm = () => {
         redirect: 'follow',
         onSuccess() {
           toast.success('Login successful')
-          navigate({ to: '/' })
+          navigate({ to: redirectTo })
         },
       },
     })
@@ -56,8 +58,14 @@ export const LoginForm = () => {
     }
   }
   const signInWithGoogle = async () => {
+    const callbackURL =
+      redirectTo !== '/'
+        ? `${window.location.origin}${redirectTo}`
+        : window.location.origin
+
     const data = await authClient.signIn.social({
       provider: 'google',
+      callbackURL,
     })
     if (data.error) {
       toast.error(data.error.message || 'Google sign-in failed')

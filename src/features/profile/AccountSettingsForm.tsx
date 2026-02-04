@@ -1,4 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useRouter } from '@tanstack/react-router'
+import { useServerFn } from '@tanstack/react-start'
 import {
   Building2,
   Globe,
@@ -12,6 +15,7 @@ import {
 import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import * as z from 'zod'
+import type { UserWithAddresses } from '@/data/user'
 import { Button } from '@/components/ui/button'
 import {
   Field,
@@ -23,10 +27,12 @@ import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-  InputGroupTextarea,
 } from '@/components/ui/input-group'
 import { Separator } from '@/components/ui/separator'
+import { Skeleton } from '@/components/ui/skeleton'
 import { PersonalInfoAvatar } from '@/components/UploadFile'
+import { updateUser, userAddressQueryKeys } from '@/data/user'
+import { authClient } from '@/lib/auth-client'
 
 const accountSchema = z.object({
   firstName: z.string().min(2, 'First name is required'),
@@ -50,21 +56,33 @@ const accountSchema = z.object({
 
 type AccountSchema = z.infer<typeof accountSchema>
 
-const AccountSettingsForm = ({ user }: { user?: any }) => {
+const AccountSettingsForm = ({
+  user,
+}: {
+  user: NonNullable<UserWithAddresses>
+}) => {
+  const queryClient = useQueryClient()
+  const router = useRouter()
+  const updateUserFn = useServerFn(updateUser)
+
+  // Get the default address (first address or default address)
+  const defaultAddress =
+    user.addresses.find((addr) => addr.isDefault) || user.addresses[0]
+
   const form = useForm<AccountSchema>({
     resolver: zodResolver(accountSchema),
     mode: 'onChange',
     defaultValues: {
-      firstName: user?.firstName || '',
-      lastName: user?.lastName || '',
-      email: user?.email || '',
-      mobile: user?.mobile || '',
-      country: user?.country || '',
-      state: user?.state || '',
-      city: user?.city || '',
-      address: user?.address || '',
-      postalCode: user?.postalCode || '',
-      addressLine2: user?.addressLine2 || '',
+      firstName: user.name ? user.name.split(' ')[0] : '',
+      lastName: user.name ? user.name.split(' ')[1] : '',
+      email: user.email || '',
+      mobile: user.mobile || '',
+      country: defaultAddress.country || '',
+      state: defaultAddress.state || '',
+      city: defaultAddress.city || '',
+      address: defaultAddress.address1 || '',
+      postalCode: defaultAddress.postalCode || '',
+      addressLine2: defaultAddress.address2 || '',
     },
   })
 
@@ -74,16 +92,51 @@ const AccountSettingsForm = ({ user }: { user?: any }) => {
     formState: { errors, isValid },
   } = form
 
+  const updateUserMutation = useMutation({
+    mutationFn: (data: AccountSchema) =>
+      updateUserFn({
+        data: {
+          name: `${data.firstName} ${data.lastName}`,
+          mobile: data.mobile,
+          address: {
+            address1: data.address,
+            address2: data.addressLine2,
+            city: data.city,
+            state: data.state,
+            country: data.country,
+            postalCode: data.postalCode,
+          },
+        },
+      }),
+    onSuccess: async () => {
+      // Invalidate user queries
+      await queryClient.invalidateQueries({
+        queryKey: userAddressQueryKeys.all(),
+      })
+
+      // Refresh Better Auth session to get updated user data
+      await authClient.getSession({ fetchOptions: { cache: 'no-cache' } })
+
+      // Invalidate router to refresh all data
+      await router.invalidate()
+
+      toast.success('Account updated successfully')
+    },
+    onError: (error) => {
+      toast.error('Failed to update account', {
+        description: error.message || 'An unexpected error occurred.',
+      })
+    },
+  })
+
   const onSubmit = (data: AccountSchema) => {
-    // Replace with real update call
-    console.log('Account updated', data)
-    toast.success('Account updated')
+    updateUserMutation.mutate(data)
   }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col p-4 gap-6">
       <div className="flex flex-col gap-4">
-        <PersonalInfoAvatar />
+        <PersonalInfoAvatar image={user.image} />
         <Separator />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Controller
@@ -150,6 +203,7 @@ const AccountSettingsForm = ({ user }: { user?: any }) => {
                       id="email"
                       type="email"
                       placeholder="me@example.com"
+                      disabled
                       {...field}
                     />
                   </InputGroup>
@@ -289,10 +343,10 @@ const AccountSettingsForm = ({ user }: { user?: any }) => {
                   <FieldLabel htmlFor="address">Address</FieldLabel>
                   <FieldContent>
                     <InputGroup>
-                      <InputGroupAddon align="block-start">
+                      <InputGroupAddon>
                         <Home />
                       </InputGroupAddon>
-                      <InputGroupTextarea
+                      <InputGroupInput
                         id="address"
                         placeholder="e.g. Apartment, suite, etc. (optional)"
                         {...field}
@@ -334,8 +388,11 @@ const AccountSettingsForm = ({ user }: { user?: any }) => {
           </div>
 
           <div className="py-2">
-            <Button type="submit" disabled={!isValid}>
-              Save changes
+            <Button
+              type="submit"
+              disabled={!isValid || updateUserMutation.isPending}
+            >
+              {updateUserMutation.isPending ? 'Saving...' : 'Save changes'}
             </Button>
           </div>
         </div>
@@ -345,3 +402,29 @@ const AccountSettingsForm = ({ user }: { user?: any }) => {
 }
 
 export default AccountSettingsForm
+
+export const AccountSettingsFormSkeleton = () => {
+  return (
+    <div className="p-4 grid gap-4">
+      <div className="flex items-center gap-4">
+        <Skeleton className="h-16 w-16 rounded-full" />
+        <div className="flex-1">
+          <Skeleton className="h-4 w-48 mb-2" />
+          <Skeleton className="h-3 w-32" />
+        </div>
+      </div>
+      <Separator />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <Skeleton key={i} className="h-10 w-full rounded-md" />
+        ))}
+        <div className="col-span-2">
+          <Skeleton className="h-20 w-full rounded-md" />
+        </div>
+        <div className="col-span-2 flex justify-end">
+          <Skeleton className="h-10 w-32 rounded-md" />
+        </div>
+      </div>
+    </div>
+  )
+}

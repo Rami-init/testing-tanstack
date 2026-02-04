@@ -1,6 +1,7 @@
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { MinusIcon, PlusIcon, XIcon } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
+import { useState } from 'react'
 import type { CartItem } from '@/store/cart'
 import CartEmpty from '@/assets/cart-empty-screeen.svg'
 import { Button } from '@/components/ui/button'
@@ -11,7 +12,9 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from '@/components/ui/input-group'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Separator } from '@/components/ui/separator'
+import { authClient } from '@/lib/auth-client'
 import { useCartStore } from '@/store/cart'
 
 export const Route = createFileRoute('/_rootLayout/products/cart')({
@@ -27,13 +30,42 @@ function RouteComponent() {
   )
 }
 const CartSummary = () => {
+  const session = authClient.useSession()
+  const navigate = Route.useNavigate()
   const items = useCartStore((state) => state.items)
   const countItems = useCartStore((state) => state.getTotalItemsCount)
-  const totalAmount = items.reduce((total, item) => {
+  const [shippingMethod, setShippingMethod] = useState('standard')
+
+  const subtotal = items.reduce((total, item) => {
     const price = Number(item.extractedPrice ?? 0)
     return total + price * item.quantity
   }, 0)
 
+  // Shipping logic: FREE if subtotal > $1000, otherwise based on method
+  const shipping =
+    subtotal > 1000
+      ? 0
+      : shippingMethod === 'express'
+        ? 29.0
+        : shippingMethod === 'overnight'
+          ? 49.0
+          : 19.0
+
+  const discount = 43.0
+  const taxRate = 0.08 // 8% tax
+  const tax = (subtotal + shipping - discount) * taxRate
+  const totalAmount = subtotal + shipping - discount + tax
+  const handleCheckout = () => {
+    if (!session.data?.user) {
+      navigate({
+        to: '/login',
+        search: { redirect: '/checkout' },
+      })
+    } else {
+      navigate({ to: '/checkout' })
+    }
+    // Proceed with checkout logic here
+  }
   return (
     <div className="col-span-1 flex flex-col gap-2">
       <aside className=" bg-white rounded-lg border border-gray-200 p-4 h-fit">
@@ -43,19 +75,69 @@ const CartSummary = () => {
         <div className="text-foreground/80 flex flex-col gap-3 py-3 text-base">
           <div className="flex justify-between">
             <span>Subtotal</span>
-            <span>${totalAmount.toFixed(2)}</span>
+            <span>${subtotal.toFixed(2)}</span>
           </div>
-          <div className="flex justify-between">
+          <div className="flex justify-between items-center">
             <span>Shipping</span>
-            <span>$19.00</span>
+            <span className="text-right">
+              {shipping === 0 ? (
+                <span className="text-green-600 font-semibold">FREE</span>
+              ) : (
+                `$${shipping.toFixed(2)}`
+              )}
+            </span>
           </div>
+          {subtotal > 0 && (
+            <div className="flex flex-col gap-2">
+              <RadioGroup
+                value={shippingMethod}
+                onValueChange={setShippingMethod}
+              >
+                <div className="flex items-center gap-2">
+                  <RadioGroupItem
+                    value="standard"
+                    id="standard"
+                    disabled={subtotal > 1000}
+                  />
+                  <label htmlFor="standard" className="text-sm">
+                    Standard ($19.00) - 5-7 days
+                  </label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <RadioGroupItem
+                    value="express"
+                    id="express"
+                    disabled={subtotal > 1000}
+                  />
+                  <label htmlFor="express" className="text-sm">
+                    Express ($29.00) - 2-3 days
+                  </label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <RadioGroupItem
+                    value="overnight"
+                    id="overnight"
+                    disabled={subtotal > 1000}
+                  />
+                  <label htmlFor="overnight" className="text-sm">
+                    Overnight ($49.00) - Next day
+                  </label>
+                </div>
+              </RadioGroup>
+              {subtotal > 1000 && (
+                <p className="text-xs text-green-600 italic">
+                  🎉 Free shipping applied on orders over $1,000!
+                </p>
+              )}
+            </div>
+          )}
           <div className="flex justify-between">
             <span>Discount</span>
-            <span>$43.00</span>
+            <span className="text-green-600">-${discount.toFixed(2)}</span>
           </div>
           <div className="flex justify-between">
-            <span>Tax</span>
-            <span>$0.00</span>
+            <span>Tax (8%)</span>
+            <span>${tax.toFixed(2)}</span>
           </div>
           <Separator />
           <div className="flex justify-between font-semibold text-lg">
@@ -63,7 +145,10 @@ const CartSummary = () => {
             <span>${totalAmount.toFixed(2)}</span>
           </div>
         </div>
-        <Button className="h-10 px-4 uppercase font-normal w-full">
+        <Button
+          onClick={handleCheckout}
+          className="h-10 px-4 uppercase font-normal w-full"
+        >
           Proceed to checkout
         </Button>
       </aside>
@@ -98,11 +183,19 @@ const CartSummary = () => {
           </div>
           <div className="flex justify-between">
             <span>Saved Amount</span>
-            <span>$43.00</span>
+            <span className="text-green-600">${discount.toFixed(2)}</span>
           </div>
           <div className="flex justify-between">
             <span>Estimated Delivery</span>
-            <span>5-7 Business Days</span>
+            <span>
+              {shipping === 0
+                ? '5-7 Days'
+                : shippingMethod === 'overnight'
+                  ? 'Next Day'
+                  : shippingMethod === 'express'
+                    ? '2-3 Days'
+                    : '5-7 Days'}
+            </span>
           </div>
         </div>
       </aside>

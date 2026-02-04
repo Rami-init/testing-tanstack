@@ -4,8 +4,12 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { getInitials } from '@/lib/utils'
 
-export const PersonalInfoAvatar = () => {
-  const [image, setImage] = React.useState<string | null>(null)
+export const PersonalInfoAvatar = ({
+  image: initialImage,
+}: {
+  image?: string | null
+}) => {
+  const [image, setImage] = React.useState<string | null>(initialImage || null)
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -17,7 +21,6 @@ export const PersonalInfoAvatar = () => {
       toast.error(' Failed to upload image.')
     }, 2000)
   }
-
   return (
     <div className="flex gap-x-2">
       <Avatar className="size-15">

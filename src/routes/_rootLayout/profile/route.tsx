@@ -1,4 +1,9 @@
-import { Link, Outlet, createFileRoute } from '@tanstack/react-router'
+import {
+  Link,
+  Outlet,
+  createFileRoute,
+  useNavigate,
+} from '@tanstack/react-router'
 import {
   Clock,
   Heart,
@@ -9,8 +14,22 @@ import {
   ShoppingCart,
   User,
 } from 'lucide-react'
+import { getUserId } from '@/data/auth-guard'
+import { authClient } from '@/lib/auth-client'
 
 export const Route = createFileRoute('/_rootLayout/profile')({
+  beforeLoad: async () => {
+    const userId = await getUserId()
+    return { userId }
+  },
+  loader: ({ context }) => {
+    if (!context.userId) {
+      throw new Error('User ID not found')
+    }
+    return {
+      userId: context.userId,
+    }
+  },
   component: RouteComponent,
 })
 const routes = [
@@ -56,14 +75,10 @@ const routes = [
     id: 'address',
     icon: <IdCard />,
   },
-  {
-    link: '/profile/log-out',
-    label: 'Log Out',
-    id: 'log-out',
-    icon: <LogOut />,
-  },
 ]
+
 function RouteComponent() {
+  const navigate = useNavigate()
   return (
     <div className="flex-1 gap-8 flex container mx-auto my-12 overflow-hidden">
       <aside className="flex flex-col rounded-lg border py-4 bg-white border-gray-300 min-w-62.5 h-fit">
@@ -78,6 +93,17 @@ function RouteComponent() {
             <span className="font-medium">{route.label}</span>
           </Link>
         ))}
+        <button
+          key="log-out"
+          onClick={async () => {
+            await authClient.signOut()
+            await navigate({ to: '/' })
+          }}
+          className="flex items-center gap-3 px-6 py-3 hover:bg-primary transition-colors text-heading hover:text-white cursor-pointer"
+        >
+          <LogOut />
+          <span className="font-medium">Log Out</span>
+        </button>
       </aside>
       <Outlet />
     </div>

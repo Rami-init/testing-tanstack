@@ -1,3 +1,5 @@
+export * from './schema/address.schema'
 export * from './schema/category.schema'
+export * from './schema/order.schema'
 export * from './schema/product.schema'
 export * from './schema/user.schema'

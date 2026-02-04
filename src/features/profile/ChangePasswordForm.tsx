@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import * as z from 'zod'
+import { authClient } from '@/lib/auth-client'
 import { PasswordInput } from '@/features/auth/Password'
 import { Button } from '@/components/ui/button'
 
@@ -35,10 +36,17 @@ const ChangePasswordForm = () => {
     },
   })
 
-  const onSubmit = (data: ChangePasswordSchema) => {
+  const onSubmit = async (values: ChangePasswordSchema) => {
     try {
-      // TODO: replace with API call to change password
-      console.log('Change password', data)
+      const { error } = await authClient.changePassword({
+        newPassword: values.newPassword, // required
+        currentPassword: values.currentPassword, // required
+        revokeOtherSessions: true,
+      })
+
+      if (error) {
+        throw new Error(error.message)
+      }
       toast.success('Password changed successfully')
     } catch (err: any) {
       toast.error(err?.message || 'Failed to change password')

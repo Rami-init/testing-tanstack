@@ -1,5 +1,13 @@
 import { relations } from 'drizzle-orm'
-import { boolean, index, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+import {
+  boolean,
+  index,
+  pgTable,
+  text,
+  timestamp,
+  varchar,
+} from 'drizzle-orm/pg-core'
+import { address } from './address.schema'
 
 export const user = pgTable('user', {
   id: text('id').primaryKey(),
@@ -7,6 +15,7 @@ export const user = pgTable('user', {
   email: text('email').notNull().unique(),
   emailVerified: boolean('email_verified').default(false).notNull(),
   image: text('image'),
+  mobile: varchar('mobile', { length: 15 }),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at')
     .defaultNow()
@@ -76,6 +85,7 @@ export const verification = pgTable(
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
   accounts: many(account),
+  addresses: many(address),
 }))
 
 export const sessionRelations = relations(session, ({ one }) => ({

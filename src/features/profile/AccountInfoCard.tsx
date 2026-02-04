@@ -1,8 +1,13 @@
+import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import type { ComponentType } from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
+import { fetchDefaultAddressQueryOptions } from '@/data/address'
+import { authClient } from '@/lib/auth-client'
+import { getInitials } from '@/lib/utils'
 
 const AccountInfoCard = ({
   children,
@@ -47,50 +52,77 @@ const AccountInfoCard = ({
   )
 }
 export const AccountInfoContent = () => {
+  const session = authClient.useSession()
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-4">
         <Avatar className="size-12">
-          <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-          <AvatarFallback>CN</AvatarFallback>
+          <AvatarImage
+            src={session.data?.user.image ?? ''}
+            alt={session.data?.user.name ?? 'User Avatar'}
+          />
+          <AvatarFallback>
+            {getInitials(session.data?.user.name || 'User')}
+          </AvatarFallback>
         </Avatar>
         <div className="flex flex-col">
           <span className="text-base font-semibold text-foreground capitalize">
-            John Doe
+            {session.data?.user.name}
           </span>
-          <span className="text-sm text-heading">Calicut, Kerala</span>
+          <span className="text-sm text-heading">
+            {session.data?.user.email}
+          </span>
         </div>
       </div>
       <div className="flex flex-col gap-2">
         <div className="flex gap-2">
           <span className="text-sm text-foreground">Phone: </span>
-          <span className="text-sm text-heading">+1 234 567 890</span>
+          <span className="text-sm text-heading">
+            {session.data?.user.mobile}
+          </span>
         </div>
         <div className="flex gap-2">
           <span className="text-sm text-foreground">Email:</span>
-          <span className="text-sm text-heading">john_doe@example.com</span>
+          <span className="text-sm text-heading">
+            {session.data?.user.email}
+          </span>
         </div>
       </div>
     </div>
   )
 }
 export const AddressInfoContent = () => {
+  const session = authClient.useSession()
+  const { data: defaultAddress, isLoading } = useQuery(
+    fetchDefaultAddressQueryOptions(),
+  )
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
-        <span className="text-sm text-foreground capitalize">John Doe</span>
-        <span className="text-sm text-heading">
-          123 Main Street, Apt 4B, Springfield, IL 62704
+        <span className="text-sm text-foreground capitalize">
+          {session.data?.user.name}
         </span>
+        {isLoading ? (
+          <Skeleton className="h-4 w-48" />
+        ) : (
+          <span className="text-sm text-heading">
+            {defaultAddress?.address1 ?? 'No default address found.'}
+          </span>
+        )}
       </div>
       <div className="flex flex-col gap-2">
         <div className="flex gap-2">
           <span className="text-sm text-foreground">Phone Number: </span>
-          <span className="text-sm text-heading">+1 234 567 890</span>
+          <span className="text-sm text-heading">
+            {session.data?.user.mobile}
+          </span>
         </div>
         <div className="flex gap-2">
           <span className="text-sm text-foreground">Email:</span>
-          <span className="text-sm text-heading">john_doe@example.com</span>
+          <span className="text-sm text-heading">
+            {session.data?.user.email}
+          </span>
         </div>
       </div>
     </div>

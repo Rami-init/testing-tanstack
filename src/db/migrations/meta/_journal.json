@@ -43,6 +43,34 @@
       "when": 1769563540850,
       "tag": "0005_small_carlie_cooper",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1769726195145,
+      "tag": "0006_thick_namor",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1769730594294,
+      "tag": "0007_common_captain_stacy",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1769782167849,
+      "tag": "0008_petite_the_hand",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1770135705208,
+      "tag": "0009_low_exiles",
+      "breakpoints": true
     }
   ]
 }

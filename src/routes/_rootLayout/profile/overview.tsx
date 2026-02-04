@@ -8,12 +8,15 @@ import AccountInfoCard, {
   AddressInfoContent,
 } from '@/features/profile/AccountInfoCard'
 import Statistic from '@/features/profile/Statistic'
+import { authClient } from '@/lib/auth-client'
 
 export const Route = createFileRoute('/_rootLayout/profile/overview')({
   component: RouteComponent,
 })
 
 function RouteComponent() {
+  const session = authClient.useSession()
+
   return (
     <div className="flex flex-col gap-10 flex-1">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
@@ -41,7 +44,7 @@ function RouteComponent() {
       </div>
       <div className="flex flex-col gap-2 max-w-lg">
         <h2 className="text-xl font-semibold text-foreground">
-          Hello, Feyz Ibrahim
+          Hello, {session.data?.user.name}
         </h2>
         <p className="text-heading text-sm font-normal">
           From your account dashboard. you can easily check & view your{' '}
@@ -70,7 +73,7 @@ function RouteComponent() {
           <AccountInfoContent />
         </AccountInfoCard>
         <AccountInfoCard
-          title="Billing Address"
+          title="Shipping Address"
           link="/profile/address"
           linkLabel="Edit Address"
           icon={CreditCard}
