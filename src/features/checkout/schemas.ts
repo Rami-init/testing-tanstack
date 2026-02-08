@@ -28,7 +28,7 @@ export const CheckoutFormSchema = z
   .superRefine((data, ctx) => {
     if (data.shipToDifferentAddress && !data.shippingAddress) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: 'custom',
         message: 'Shipping address is required',
         path: ['shippingAddress'],
       })

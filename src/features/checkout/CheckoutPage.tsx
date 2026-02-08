@@ -17,7 +17,6 @@ import type {
 } from './schemas'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Checkbox } from '@/components/ui/checkbox'
 import {
   Dialog,
   DialogContent,
@@ -91,19 +90,16 @@ const CheckoutPage = () => {
   const [billingAddresses, setBillingAddresses] = useState<Array<SavedAddress>>(
     savedAddressSeed.map(mapToSaved),
   )
-  const [shippingAddresses, setShippingAddresses] = useState<
-    Array<SavedAddress>
-  >(savedAddressSeed.map(mapToSaved))
+  const [shippingAddresses] = useState<Array<SavedAddress>>(
+    savedAddressSeed.map(mapToSaved),
+  )
 
   const [selectedBillingId, setSelectedBillingId] = useState(
     billingAddresses[0]?.id ?? '',
   )
-  const [selectedShippingId, setSelectedShippingId] = useState(
-    shippingAddresses[0]?.id ?? '',
-  )
+  const [selectedShippingId] = useState(shippingAddresses[0]?.id ?? '')
 
   const [billingDialogOpen, setBillingDialogOpen] = useState(false)
-  const [shippingDialogOpen, setShippingDialogOpen] = useState(false)
   const [cardDialogOpen, setCardDialogOpen] = useState(false)
   const [selectedCard, setSelectedCard] = useState<CardFormValues | null>(null)
 
@@ -127,21 +123,7 @@ const CheckoutPage = () => {
     },
   })
 
-  const shipToDifferentAddress = form.watch('shipToDifferentAddress')
-
   const billingForm = useForm<AddressFormValues>({
-    resolver: zodResolver(AddressSchema),
-    defaultValues: {
-      street: '',
-      city: '',
-      state: '',
-      zip: '',
-      country: countries[0],
-    },
-    mode: 'onChange',
-  })
-
-  const shippingForm = useForm<AddressFormValues>({
     resolver: zodResolver(AddressSchema),
     defaultValues: {
       street: '',
@@ -184,14 +166,6 @@ const CheckoutPage = () => {
     }
   }
 
-  const handleShippingSelect = (id: string) => {
-    setSelectedShippingId(id)
-    const selected = shippingAddresses.find((item) => item.id === id)
-    if (selected) {
-      form.setValue('shippingAddress', selected, { shouldValidate: true })
-    }
-  }
-
   const handleAddBilling = (data: AddressFormValues) => {
     const next = mapToSaved(data)
     setBillingAddresses((prev) => [...prev, next])
@@ -205,21 +179,6 @@ const CheckoutPage = () => {
       country: countries[0],
     })
     setBillingDialogOpen(false)
-  }
-
-  const handleAddShipping = (data: AddressFormValues) => {
-    const next = mapToSaved(data)
-    setShippingAddresses((prev) => [...prev, next])
-    setSelectedShippingId(next.id)
-    form.setValue('shippingAddress', next, { shouldValidate: true })
-    shippingForm.reset({
-      street: '',
-      city: '',
-      state: '',
-      zip: '',
-      country: countries[0],
-    })
-    setShippingDialogOpen(false)
   }
 
   const handleSaveCard = (data: CardFormValues) => {
@@ -383,170 +342,6 @@ const CheckoutPage = () => {
                   </form>
                 </DialogContent>
               </Dialog>
-            </CardContent>
-          </Card>
-
-          <Card className="border-gray-200">
-            <CardHeader>
-              <CardTitle className="text-lg">Shipping</CardTitle>
-            </CardHeader>
-            <CardContent className="flex flex-col gap-4">
-              <label className="flex items-center gap-3 text-sm font-medium">
-                <Checkbox
-                  checked={shipToDifferentAddress}
-                  onChange={(event) =>
-                    form.setValue(
-                      'shipToDifferentAddress',
-                      event.target.checked,
-                    )
-                  }
-                />
-                Ship to a different address
-              </label>
-
-              {shipToDifferentAddress && (
-                <div className="flex flex-col gap-4">
-                  <RadioGroup
-                    value={selectedShippingId}
-                    onValueChange={handleShippingSelect}
-                    className="gap-4"
-                  >
-                    {shippingAddresses.map((address) => (
-                      <label
-                        key={address.id}
-                        className="flex items-start justify-between rounded-lg border border-gray-200 p-4 transition hover:border-[#3858d6]"
-                      >
-                        <div className="flex gap-3">
-                          <RadioGroupItem value={address.id} />
-                          <div>
-                            <p className="text-sm font-semibold text-foreground">
-                              {address.label}
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              {address.city}, {address.state} {address.zip}
-                            </p>
-                          </div>
-                        </div>
-                        <Check className="mt-1 size-4 text-[#3858d6]" />
-                      </label>
-                    ))}
-                  </RadioGroup>
-
-                  <Dialog
-                    open={shippingDialogOpen}
-                    onOpenChange={setShippingDialogOpen}
-                  >
-                    <DialogTrigger asChild>
-                      <Button type="button" className="w-fit bg-[#3858d6]">
-                        <Plus className="mr-2 size-4" /> Add New Address
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-xl">
-                      <DialogHeader>
-                        <DialogTitle>Add Shipping Address</DialogTitle>
-                        <DialogDescription>
-                          Save a new shipping address for your order.
-                        </DialogDescription>
-                      </DialogHeader>
-                      <form
-                        onSubmit={shippingForm.handleSubmit(handleAddShipping)}
-                        className="grid gap-4"
-                      >
-                        <div className="grid gap-3">
-                          <Label htmlFor="shipping-street">Street</Label>
-                          <Input
-                            id="shipping-street"
-                            placeholder="123 Market Street"
-                            {...shippingForm.register('street')}
-                          />
-                          {shippingForm.formState.errors.street?.message && (
-                            <p className="text-xs text-red-500">
-                              {shippingForm.formState.errors.street.message}
-                            </p>
-                          )}
-                        </div>
-                        <div className="grid gap-3 sm:grid-cols-2">
-                          <div className="grid gap-3">
-                            <Label htmlFor="shipping-city">City</Label>
-                            <Input
-                              id="shipping-city"
-                              placeholder="San Francisco"
-                              {...shippingForm.register('city')}
-                            />
-                            {shippingForm.formState.errors.city?.message && (
-                              <p className="text-xs text-red-500">
-                                {shippingForm.formState.errors.city.message}
-                              </p>
-                            )}
-                          </div>
-                          <div className="grid gap-3">
-                            <Label htmlFor="shipping-state">State</Label>
-                            <Input
-                              id="shipping-state"
-                              placeholder="CA"
-                              {...shippingForm.register('state')}
-                            />
-                            {shippingForm.formState.errors.state?.message && (
-                              <p className="text-xs text-red-500">
-                                {shippingForm.formState.errors.state.message}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                        <div className="grid gap-3 sm:grid-cols-2">
-                          <div className="grid gap-3">
-                            <Label htmlFor="shipping-zip">ZIP</Label>
-                            <Input
-                              id="shipping-zip"
-                              placeholder="94103"
-                              {...shippingForm.register('zip')}
-                            />
-                            {shippingForm.formState.errors.zip?.message && (
-                              <p className="text-xs text-red-500">
-                                {shippingForm.formState.errors.zip.message}
-                              </p>
-                            )}
-                          </div>
-                          <div className="grid gap-3">
-                            <Label htmlFor="shipping-country">Country</Label>
-                            <Controller
-                              control={shippingForm.control}
-                              name="country"
-                              render={({ field }) => (
-                                <Select
-                                  value={field.value}
-                                  onValueChange={field.onChange}
-                                >
-                                  <SelectTrigger>
-                                    <SelectValue placeholder="Select country" />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    {countries.map((country) => (
-                                      <SelectItem key={country} value={country}>
-                                        {country}
-                                      </SelectItem>
-                                    ))}
-                                  </SelectContent>
-                                </Select>
-                              )}
-                            />
-                            {shippingForm.formState.errors.country?.message && (
-                              <p className="text-xs text-red-500">
-                                {shippingForm.formState.errors.country.message}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                        <DialogFooter>
-                          <Button type="submit" className="bg-[#3858d6]">
-                            Save Address
-                          </Button>
-                        </DialogFooter>
-                      </form>
-                    </DialogContent>
-                  </Dialog>
-                </div>
-              )}
             </CardContent>
           </Card>
 
