@@ -95,12 +95,8 @@
           "name": "address_user_id_user_id_fk",
           "tableFrom": "address",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -178,9 +174,7 @@
         "category_slug_unique": {
           "name": "category_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "policies": {},
@@ -255,12 +249,8 @@
           "name": "order_user_id_user_id_fk",
           "tableFrom": "order",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -268,12 +258,8 @@
           "name": "order_shipping_address_id_address_id_fk",
           "tableFrom": "order",
           "tableTo": "address",
-          "columnsFrom": [
-            "shipping_address_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["shipping_address_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -344,12 +330,8 @@
           "name": "order_item_order_id_order_id_fk",
           "tableFrom": "order_item",
           "tableTo": "order",
-          "columnsFrom": [
-            "order_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["order_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -357,12 +339,8 @@
           "name": "order_item_product_id_product_id_fk",
           "tableFrom": "order_item",
           "tableTo": "product",
-          "columnsFrom": [
-            "product_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["product_id"],
+          "columnsTo": ["id"],
           "onDelete": "restrict",
           "onUpdate": "no action"
         }
@@ -571,12 +549,8 @@
           "name": "product_category_id_category_id_fk",
           "tableFrom": "product",
           "tableTo": "category",
-          "columnsFrom": [
-            "category_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["category_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -586,9 +560,7 @@
         "product_asin_unique": {
           "name": "product_asin_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "asin"
-          ]
+          "columns": ["asin"]
         }
       },
       "policies": {},
@@ -692,12 +664,8 @@
           "name": "product_review_product_id_product_id_fk",
           "tableFrom": "product_review",
           "tableTo": "product",
-          "columnsFrom": [
-            "product_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["product_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -814,12 +782,8 @@
           "name": "account_user_id_user_id_fk",
           "tableFrom": "account",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -906,12 +870,8 @@
           "name": "session_user_id_user_id_fk",
           "tableFrom": "session",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -921,9 +881,7 @@
         "session_token_unique": {
           "name": "session_token_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "token"
-          ]
+          "columns": ["token"]
         }
       },
       "policies": {},
@@ -993,9 +951,7 @@
         "user_email_unique": {
           "name": "user_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},
