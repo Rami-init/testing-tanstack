@@ -7,6 +7,7 @@ export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: 'pg', // or "mysql", "sqlite"
   }),
+  trustedOrigins: ['https://ex-phonex.com', 'https://www.ex-phonex.com'],
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: false,
