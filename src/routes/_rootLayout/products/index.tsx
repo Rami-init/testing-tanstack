@@ -16,6 +16,18 @@ const searchParamsSchema = ProductFiltersSchema.extend({
 })
 
 export const Route = createFileRoute('/_rootLayout/products/')({
+  head: () => ({
+    meta: [
+      { title: 'Shop | ex-phonex' },
+      {
+        name: 'description',
+        content:
+          'Browse our full collection of premium refurbished smartphones at ex-phonex. Filter by category, price, and more to find your perfect phone.',
+      },
+      { property: 'og:title', content: 'Shop | ex-phonex' },
+      { property: 'og:url', content: 'https://www.ex-phonex.com/products' },
+    ],
+  }),
   component: ProductsPage,
   validateSearch: searchParamsSchema,
   loaderDeps: ({ search }) => search,

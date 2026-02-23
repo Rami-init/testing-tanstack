@@ -9,10 +9,31 @@ import ProductView from '@/features/product/ProductView'
 
 export const Route = createFileRoute('/_rootLayout/products/$id')({
   loader: ({ context, params }) => {
-    return context.queryClient.prefetchQuery(
+    return context.queryClient.ensureQueryData(
       fetchProductByIdQueryOptions(params.id),
     )
   },
+  head: ({ loaderData }) => ({
+    meta: [
+      {
+        title: loaderData?.title
+          ? `${loaderData.title} | ex-phonex`
+          : 'Product | ex-phonex',
+      },
+      {
+        name: 'description',
+        content: loaderData?.description?.length
+          ? String(loaderData.description[0]).slice(0, 160)
+          : 'View product details, specs, and reviews on ex-phonex.',
+      },
+      {
+        property: 'og:title',
+        content: loaderData?.title
+          ? `${loaderData.title} | ex-phonex`
+          : 'Product | ex-phonex',
+      },
+    ],
+  }),
   component: RouteComponent,
 })
 

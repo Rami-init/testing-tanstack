@@ -20,22 +20,48 @@ interface MyRouterContext {
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   head: () => ({
     meta: [
+      { charSet: 'utf-8' },
+      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+      { title: 'ex-phonex | Premium Refurbished Phones' },
       {
-        charSet: 'utf-8',
+        name: 'description',
+        content:
+          'Shop premium quality refurbished smartphones at ex-phonex. Best prices, warranty included, and fast shipping on every order.',
+      },
+      { name: 'robots', content: 'index, follow' },
+      { name: 'theme-color', content: '#3858d6' },
+      // Open Graph
+      { property: 'og:type', content: 'website' },
+      { property: 'og:site_name', content: 'ex-phonex' },
+      {
+        property: 'og:title',
+        content: 'ex-phonex | Premium Refurbished Phones',
       },
       {
-        name: 'viewport',
-        content: 'width=device-width, initial-scale=1',
+        property: 'og:description',
+        content:
+          'Shop premium quality refurbished smartphones at ex-phonex. Best prices, warranty included, and fast shipping on every order.',
+      },
+      { property: 'og:image', content: 'https://www.ex-phonex.com/logo.svg' },
+      { property: 'og:url', content: 'https://www.ex-phonex.com' },
+      // Twitter / X
+      { name: 'twitter:card', content: 'summary_large_image' },
+      {
+        name: 'twitter:title',
+        content: 'ex-phonex | Premium Refurbished Phones',
       },
       {
-        title: 'TanStack Start Starter',
+        name: 'twitter:description',
+        content:
+          'Shop premium quality refurbished smartphones at ex-phonex. Best prices, warranty included.',
       },
+      { name: 'twitter:image', content: 'https://www.ex-phonex.com/logo.svg' },
     ],
     links: [
-      {
-        rel: 'stylesheet',
-        href: appCss,
-      },
+      { rel: 'stylesheet', href: appCss },
+      { rel: 'icon', href: '/logo.svg', type: 'image/svg+xml' },
+      { rel: 'apple-touch-icon', href: '/logo192.png' },
+      { rel: 'manifest', href: '/manifest.json' },
     ],
   }),
 
