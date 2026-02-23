@@ -1,8 +1,10 @@
+import { useSuspenseQuery } from '@tanstack/react-query'
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { CreditCard, UserRound } from 'lucide-react'
 import PackageIcon from '@/assets/icons/PackageIcon'
 import ReceiptIcon from '@/assets/icons/ReceiptIcon'
 import RocketIcon from '@/assets/icons/rocketIcon'
+import { fetchOrderStatsQueryOptions } from '@/data/checkout'
 import AccountInfoCard, {
   AccountInfoContent,
   AddressInfoContent,
@@ -11,31 +13,35 @@ import Statistic from '@/features/profile/Statistic'
 import { authClient } from '@/lib/auth-client'
 
 export const Route = createFileRoute('/_rootLayout/profile/overview')({
+  loader: ({ context }) => {
+    context.queryClient.ensureQueryData(fetchOrderStatsQueryOptions())
+  },
   component: RouteComponent,
 })
 
 function RouteComponent() {
   const session = authClient.useSession()
+  const { data: stats } = useSuspenseQuery(fetchOrderStatsQueryOptions())
 
   return (
     <div className="flex flex-col gap-10 flex-1">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <Statistic
-          total={100}
+          total={`$${stats.totalSales.toFixed(2)}`}
           caption="Total Sales"
           color="#EAF6FE"
           iconColor="#2DA5F3"
           icon={RocketIcon}
         />
         <Statistic
-          total={250}
+          total={stats.pendingOrders}
           caption="Pending Orders"
           color="#FFF3EB"
           iconColor="#FA8232"
           icon={ReceiptIcon}
         />
         <Statistic
-          total={75}
+          total={stats.completedOrders}
           caption="Completed Orders"
           color="#EAF7E9"
           iconColor="#2DB324"

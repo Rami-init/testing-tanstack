@@ -388,9 +388,12 @@ const CheckoutPage = () => {
     return sum + price * item.quantity
   }, 0)
 
+  const hasItems = cartItems.length > 0 && subtotal > 0
+
   // Shipping: FREE if subtotal > $1000, otherwise based on method
-  const shipping =
-    subtotal > 1000
+  const shipping = !hasItems
+    ? 0
+    : subtotal > 1000
       ? 0
       : shippingMethod === 'express'
         ? 29.0
@@ -398,9 +401,9 @@ const CheckoutPage = () => {
           ? 49.0
           : 19.0
 
-  const discount = 43.0
-  const tax = (subtotal + shipping - discount) * 0.08
-  const total = subtotal + shipping - discount + tax
+  const discount = hasItems ? 43.0 : 0
+  const tax = hasItems ? (subtotal + shipping - discount) * 0.08 : 0
+  const total = hasItems ? subtotal + shipping - discount + tax : 0
 
   const selectedBillingId = form.watch('billingAddressId')
   const selectedPaymentId = form.watch('paymentMethodId')

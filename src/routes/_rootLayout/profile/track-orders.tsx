@@ -1,9 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { createFileRoute } from '@tanstack/react-router'
-import { Info } from 'lucide-react'
+import { useServerFn } from '@tanstack/react-start'
+import { Info, Loader2 } from 'lucide-react'
+import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
+import { trackOrder } from '@/data/checkout'
 import { Input } from '@/components/ui/input'
 import {
   Field,
@@ -23,7 +26,31 @@ const trackOrderSchema = z.object({
   orderId: z.string().min(1, 'Order ID is required'),
   billingEmail: z.string().email('Invalid email address'),
 })
+
+type TrackedOrder = {
+  id: number
+  status: string
+  totalAmount: string
+  createdAt: string
+  items: Array<{ productId: number; quantity: number; price: string }>
+}
+
+const statusStyles: Record<string, string> = {
+  pending: 'bg-yellow-100 text-yellow-800',
+  paid: 'bg-green-100 text-green-800',
+  processing: 'bg-blue-100 text-blue-800',
+  shipped: 'bg-purple-100 text-purple-800',
+  delivered: 'bg-green-200 text-green-900',
+  cancelled: 'bg-red-100 text-red-800',
+  refunded: 'bg-gray-100 text-gray-800',
+  declined: 'bg-red-200 text-red-900',
+}
+
 function RouteComponent() {
+  const [trackedOrder, setTrackedOrder] = useState<TrackedOrder | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const trackOrderFn = useServerFn(trackOrder)
+
   const {
     handleSubmit,
     control,
@@ -37,10 +64,20 @@ function RouteComponent() {
     resolver: zodResolver(trackOrderSchema),
   })
 
-  const onSubmit = (data: z.infer<typeof trackOrderSchema>) => {
-    // Replace with real update call
-    console.log('Account updated', data)
-    toast.success('Account updated')
+  const onSubmit = async (data: z.infer<typeof trackOrderSchema>) => {
+    setIsLoading(true)
+    setTrackedOrder(null)
+    try {
+      const result = await trackOrderFn({ data })
+      setTrackedOrder(result as TrackedOrder)
+      toast.success('Order found!')
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : 'Failed to track order',
+      )
+    } finally {
+      setIsLoading(false)
+    }
   }
   return (
     <div className="flex flex-col gap-10 flex-1">
@@ -111,10 +148,71 @@ function RouteComponent() {
               </div>
             </FieldGroup>
           </FieldSet>
-          <Button disabled={!isValid} type="submit" className="mt-4">
-            Track Order
+          <Button
+            disabled={!isValid || isLoading}
+            type="submit"
+            className="mt-4"
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Tracking...
+              </>
+            ) : (
+              'Track Order'
+            )}
           </Button>
         </form>
+
+        {trackedOrder && (
+          <div className="mt-6 rounded-lg border border-gray-200 bg-white p-6">
+            <h3 className="text-lg font-semibold mb-4">Order Details</h3>
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+              <div>
+                <p className="text-sm text-gray-500">Order ID</p>
+                <p className="font-medium">#{trackedOrder.id}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Status</p>
+                <span
+                  className={`inline-block mt-1 px-2 py-0.5 rounded-full text-xs font-medium capitalize ${statusStyles[trackedOrder.status] ?? ''}`}
+                >
+                  {trackedOrder.status}
+                </span>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Total</p>
+                <p className="font-medium">
+                  ${Number(trackedOrder.totalAmount).toFixed(2)}
+                </p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Date</p>
+                <p className="font-medium">
+                  {new Date(trackedOrder.createdAt).toLocaleDateString()}
+                </p>
+              </div>
+            </div>
+            {trackedOrder.items.length > 0 && (
+              <div className="mt-4">
+                <p className="text-sm text-gray-500 mb-2">Items</p>
+                <div className="space-y-2">
+                  {trackedOrder.items.map((item, idx) => (
+                    <div
+                      key={idx}
+                      className="flex justify-between text-sm border-b border-gray-100 pb-1"
+                    >
+                      <span>
+                        Product #{item.productId} × {item.quantity}
+                      </span>
+                      <span>${Number(item.price).toFixed(2)}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   )

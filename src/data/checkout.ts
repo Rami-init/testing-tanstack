@@ -1,6 +1,7 @@
+import { queryOptions } from '@tanstack/react-query'
 import { createServerFn } from '@tanstack/react-start'
 import { getRequestHeaders } from '@tanstack/react-start/server'
-import { and, eq, ne, or } from 'drizzle-orm'
+import { and, count, eq, inArray, ne, or, sql, sum } from 'drizzle-orm'
 import { z } from 'zod'
 import { authMiddleware } from './auth-guard'
 import type { CartItem } from '@/store/cart'
@@ -91,9 +92,12 @@ export const processOrder = createServerFn({
       return total + price * item.quantity
     }, 0)
 
+    const hasItems = payload.items.length > 0 && subtotal > 0
+
     // Shipping: FREE if subtotal > $1000, otherwise based on method
-    const shipping =
-      subtotal > 1000
+    const shipping = !hasItems
+      ? 0
+      : subtotal > 1000
         ? 0
         : payload.shippingMethod === 'express'
           ? 29.0
@@ -101,9 +105,9 @@ export const processOrder = createServerFn({
             ? 49.0
             : 19.0
 
-    const discount = 43.0
-    const tax = (subtotal + shipping - discount) * 0.08
-    const totalAmount = subtotal + shipping - discount + tax
+    const discount = hasItems ? 43.0 : 0
+    const tax = hasItems ? (subtotal + shipping - discount) * 0.08 : 0
+    const totalAmount = hasItems ? subtotal + shipping - discount + tax : 0
 
     // Create order in transaction
     const result = await db.transaction(async (tx) => {
@@ -245,4 +249,146 @@ export const fetchOrder = createServerFn({
     }
 
     return result
+  })
+
+// Fetch order statistics for user dashboard
+export const fetchOrderStats = createServerFn({
+  method: 'GET',
+})
+  .middleware([authMiddleware])
+  .handler(async ({ context }) => {
+    const userId = context.user.id
+
+    const [stats] = await db
+      .select({
+        totalSales: sum(order.totalAmount),
+        pendingOrders: count(
+          sql`CASE WHEN ${order.status} IN ('pending', 'processing') THEN 1 END`,
+        ),
+        completedOrders: count(
+          sql`CASE WHEN ${order.status} IN ('paid', 'delivered', 'shipped') THEN 1 END`,
+        ),
+      })
+      .from(order)
+      .where(eq(order.userId, userId))
+
+    return {
+      totalSales: Number(stats.totalSales ?? 0),
+      pendingOrders: stats.pendingOrders,
+      completedOrders: stats.completedOrders,
+    }
+  })
+
+export const fetchOrderStatsQueryOptions = () =>
+  queryOptions({
+    queryKey: ['orderStats'],
+    queryFn: () => fetchOrderStats(),
+  })
+
+// Fetch all orders for user (order history)
+export const fetchUserOrders = createServerFn({
+  method: 'GET',
+})
+  .middleware([authMiddleware])
+  .handler(async ({ context }) => {
+    const userId = context.user.id
+
+    const orders = await db
+      .select()
+      .from(order)
+      .where(eq(order.userId, userId))
+      .orderBy(sql`${order.createdAt} DESC`)
+
+    if (orders.length === 0) return []
+
+    const orderIds = orders.map((o) => o.id)
+    const items = await db
+      .select({
+        orderId: orderItem.orderId,
+        productId: orderItem.productId,
+        quantity: orderItem.quantity,
+        price: orderItem.price,
+      })
+      .from(orderItem)
+      .where(inArray(orderItem.orderId, orderIds))
+
+    const pmIds = orders
+      .map((o) => o.paymentMethodId)
+      .filter((id): id is number => id != null)
+
+    const paymentMethods =
+      pmIds.length > 0
+        ? await db
+            .select({
+              id: paymentMethod.id,
+              cardBrand: paymentMethod.cardBrand,
+              cardNumber: paymentMethod.cardNumber,
+            })
+            .from(paymentMethod)
+            .where(inArray(paymentMethod.id, pmIds))
+        : []
+
+    const pmMap = new Map(paymentMethods.map((pm) => [pm.id, pm]))
+
+    return orders.map((o) => {
+      const pm = o.paymentMethodId ? pmMap.get(o.paymentMethodId) : null
+      return {
+        ...o,
+        items: items.filter((i) => i.orderId === o.id),
+        paymentLabel: pm
+          ? `${pm.cardBrand} ****${pm.cardNumber.slice(-4)}`
+          : 'N/A',
+      }
+    })
+  })
+
+export const fetchUserOrdersQueryOptions = () =>
+  queryOptions({
+    queryKey: ['userOrders'],
+    queryFn: () => fetchUserOrders(),
+  })
+
+// Track order by ID
+const trackOrderSchema = z.object({
+  orderId: z.string().min(1),
+  billingEmail: z.string().email(),
+})
+
+export const trackOrder = createServerFn({
+  method: 'POST',
+})
+  .inputValidator((data) => trackOrderSchema.parse(data))
+  .middleware([authMiddleware])
+  .handler(async ({ data: payload, context }) => {
+    const orderIdNum = Number(payload.orderId)
+    if (Number.isNaN(orderIdNum) || orderIdNum <= 0) {
+      throw new Error('Invalid order ID')
+    }
+
+    const [result] = await db
+      .select()
+      .from(order)
+      .where(and(eq(order.id, orderIdNum), eq(order.userId, context.user.id)))
+      .limit(1)
+
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (!result) {
+      throw new Error(
+        'Order not found. Please check your Order ID and try again.',
+      )
+    }
+
+    const orderItems = await db
+      .select({
+        productId: orderItem.productId,
+        quantity: orderItem.quantity,
+        price: orderItem.price,
+      })
+      .from(orderItem)
+      .where(eq(orderItem.orderId, result.id))
+
+    return {
+      ...result,
+      items: orderItems,
+    }
   })

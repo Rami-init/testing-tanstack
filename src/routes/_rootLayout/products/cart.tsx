@@ -41,9 +41,12 @@ const CartSummary = () => {
     return total + price * item.quantity
   }, 0)
 
+  const hasItems = items.length > 0 && subtotal > 0
+
   // Shipping logic: FREE if subtotal > $1000, otherwise based on method
-  const shipping =
-    subtotal > 1000
+  const shipping = !hasItems
+    ? 0
+    : subtotal > 1000
       ? 0
       : shippingMethod === 'express'
         ? 29.0
@@ -51,10 +54,10 @@ const CartSummary = () => {
           ? 49.0
           : 19.0
 
-  const discount = 43.0
+  const discount = hasItems ? 43.0 : 0
   const taxRate = 0.08 // 8% tax
-  const tax = (subtotal + shipping - discount) * taxRate
-  const totalAmount = subtotal + shipping - discount + tax
+  const tax = hasItems ? (subtotal + shipping - discount) * taxRate : 0
+  const totalAmount = hasItems ? subtotal + shipping - discount + tax : 0
   const handleCheckout = () => {
     if (!session.data?.user) {
       navigate({
