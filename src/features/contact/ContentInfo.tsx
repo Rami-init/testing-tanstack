@@ -15,7 +15,7 @@ export const ContactInfo = () => {
         <ContactDetails content=" +30-698-545-2831">
           <PhoneIcon size={20} className="shrink-0" />
         </ContactDetails>
-        <ContactDetails content="chat@ex-iphones.com">
+        <ContactDetails content="chat@ex-phonex.com">
           <MailIcon size={20} className="shrink-0" />
         </ContactDetails>
         <ContactDetails content="23, Καλλιστράτους St., Regional Unit of Central Athens, Athens, Greece">

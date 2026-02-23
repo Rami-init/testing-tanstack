@@ -6,7 +6,7 @@ const IphoneBanner = () => {
   return (
     <section className="flex bg-black flex-col items-center  justify-center mx-auto  pt-20 gap-y-20 w-full">
       <div className="flex flex-col gap-y-2 text-center items-center">
-        <h2 className="text-white text-5xl font-semibold">All iPhone Models</h2>
+        <h2 className="text-white text-5xl font-semibold">All PhoneX Models</h2>
         <p className="text-white text-lg">
           from $699.00 or $29.12/mo. for 24 mo. before trade‑in, plus tax.{' '}
         </p>
@@ -26,7 +26,7 @@ const IphoneBanner = () => {
       </div>
       <img
         src={ThreeIphoneImage}
-        alt="Three iPhone Models"
+        alt="Three PhoneX Models"
         className="w-225 h-auto"
       />
     </section>

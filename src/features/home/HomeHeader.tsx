@@ -37,7 +37,7 @@ const Header = () => {
                   delay: 0.3,
                 }}
               />
-              <h1 className="text-base font-medium text-heading">ex-iphones</h1>
+              <h1 className="text-base font-medium text-heading">ex-phonex</h1>
             </Link>
           </motion.div>
           <motion.ul

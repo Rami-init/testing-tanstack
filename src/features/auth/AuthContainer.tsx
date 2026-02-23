@@ -23,7 +23,7 @@ const AuthContainer = ({
               height={64}
               className="inline-block mr-1"
             />
-            <h1 className="text-4xl font-medium text-heading">ex-iphones</h1>
+            <h1 className="text-4xl font-medium text-heading">ex-phonex</h1>
           </div>
         </CardTitle>
         <CardDescription className="font-bold text-2xl">Signup</CardDescription>

@@ -17,7 +17,7 @@ const Header = () => {
             height={32}
             className="inline-block mr-1"
           />
-          <h1 className="text-base font-medium text-heading">ex-iphones</h1>
+          <h1 className="text-base font-medium text-heading">ex-phonex</h1>
         </Link>
         <ul className="flex text-heading font-bold text-base h-full">
           <LinkItem to="/">Home</LinkItem>

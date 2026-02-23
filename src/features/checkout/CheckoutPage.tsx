@@ -31,6 +31,7 @@ import type { AddressFormValues } from '@/schema/address'
 import type { CartItem } from '@/store/cart'
 import type { CardFormValues, CheckoutFormValues } from './schemas'
 import amexCardImg from '@/assets/american-express-card.png'
+import defaultCardImg from '@/assets/default-card.png'
 import discoverCardImg from '@/assets/discover-card.png'
 import jcbCardImg from '@/assets/jcb-card.png'
 import mastercardCardImg from '@/assets/mastercard-card.png'
@@ -93,11 +94,13 @@ const emptyAddressForm: AddressFormValues = {
 const detectCardBrand = (cardNumber: string): string => {
   const cleanNumber = cardNumber.replace(/\s/g, '')
   if (/^4/.test(cleanNumber)) return 'Visa'
-  if (/^5[1-5]/.test(cleanNumber)) return 'Mastercard'
+  if (/^(5[1-5]|2[2-7])/.test(cleanNumber)) return 'Mastercard'
   if (/^3[47]/.test(cleanNumber)) return 'American Express'
-  if (/^6(?:011|5)/.test(cleanNumber)) return 'Discover'
+  if (/^3(0[0-5]|[68])/.test(cleanNumber)) return 'Diners Club'
+  if (/^35(2[89]|[3-8])/.test(cleanNumber)) return 'JCB'
+  if (/^65559/.test(cleanNumber)) return 'BCcard'
+  if (/^6(011|5|4[4-9]|22)/.test(cleanNumber)) return 'Discover'
   if (/^62/.test(cleanNumber)) return 'UnionPay'
-  if (/^35(?:2[89]|[3-8])/.test(cleanNumber)) return 'JCB'
   return ''
 }
 
@@ -107,14 +110,16 @@ const cardBrandImages: Record<string, string> = {
   Mastercard: mastercardCardImg,
   'American Express': amexCardImg,
   Discover: discoverCardImg,
+  'Diners Club': defaultCardImg,
   UnionPay: unionpayCardImg,
   JCB: jcbCardImg,
+  BCcard: defaultCardImg,
 }
 
-// Format card number with spaces (every 4 digits, AMEX: 4-6-5)
+// Format card number with spaces
 const formatCardNumber = (value: string): string => {
   const clean = value.replace(/\D/g, '')
-  // American Express: 4-6-5
+  // American Express: 4-6-5 (15 digits)
   if (/^3[47]/.test(clean)) {
     return clean
       .slice(0, 15)
@@ -122,8 +127,16 @@ const formatCardNumber = (value: string): string => {
         [a, b, c].filter(Boolean).join(' '),
       )
   }
-  // All others: groups of 4
-  return clean.slice(0, 16).replace(/(\d{4})(?=\d)/g, '$1 ')
+  // Diners Club: 14-digit cards, groups of 4
+  if (/^3(0[0-5]|[68])/.test(clean)) {
+    return clean.slice(0, 19).replace(/(\d{4})(?=\d)/g, '$1 ')
+  }
+  // UnionPay: up to 19 digits, groups of 4
+  if (/^62/.test(clean)) {
+    return clean.slice(0, 19).replace(/(\d{4})(?=\d)/g, '$1 ')
+  }
+  // All others: 16 digits, groups of 4
+  return clean.slice(0, 19).replace(/(\d{4})(?=\d)/g, '$1 ')
 }
 
 // Format expiry with auto-slash
@@ -1136,15 +1149,11 @@ const PaymentMethodSection = ({
                 >
                   <div className="flex items-center gap-3">
                     <RadioGroupItem value={pm.id.toString()} />
-                    {brandImg ? (
-                      <img
-                        src={brandImg}
-                        alt={pm.cardBrand}
-                        className="h-8 w-auto object-contain"
-                      />
-                    ) : (
-                      <CreditCard className="size-5 text-[#3858d6]" />
-                    )}
+                    <img
+                      src={brandImg || defaultCardImg}
+                      alt={pm.cardBrand || 'Card'}
+                      className="h-8 w-auto object-contain"
+                    />
                     <div>
                       <p className="text-sm font-semibold">
                         {pm.cardBrand} ending in {lastFour}
@@ -1220,7 +1229,7 @@ const PaymentMethodSection = ({
                           }}
                           className="pr-14 font-mono tracking-wider"
                           inputMode="numeric"
-                          maxLength={19}
+                          maxLength={23}
                         />
                         {brandImg && (
                           <img

@@ -16,16 +16,16 @@ const IphoneCollection = () => {
     error,
   } = useQuery(fetchProductByCategoryIdQueryOptions(2))
   if (isLoading) {
-    return <div>Loading iPhone products...</div>
+    return <div>Loading PhoneX products...</div>
   }
   if (error) {
-    return <div>Error loading iPhone products: {error.message}</div>
+    return <div>Error loading PhoneX products: {error.message}</div>
   }
   return (
     <section className="py-20 w-full px-4 md:px-8 lg:px-16 bg-white">
       <div className="flex flex-col items-center justify-center gap-25 container w-full mx-auto">
         <h1 className="text-5xl font-bold text-[#1D1D1F] ">
-          Newest Iphone Collection
+          Newest PhoneX Collection
         </h1>
         <Carousel className="w-full blur-lg/10">
           <CarouselContent className="-ml-1 ">

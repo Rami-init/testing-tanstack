@@ -11,7 +11,7 @@ const About = () => {
     <div className="flex flex-col py-10 container mx-auto mt-16">
       <div>
         <h1 className="text-5xl font-semibold text-heading text-center">
-          About the ex.iphones.
+          About the ex.phonex.
         </h1>
         <div className="space-x-4 text-sm text-heading/80 text-center flex items-center justify-center mt-4">
           <h5 className="font-semibold flex items-center gap-1">
@@ -30,9 +30,9 @@ const About = () => {
         />
         <div className="grid grid-cols-5 mt-20 gap-10 max-w-4xl mx-auto">
           <div className="max-w-2xl mx-auto text-center text-lg text-heading/90 space-y-6 col-span-4">
-            <Content title="Who ex.iphones. started">
-              ex.iphones. began with a simple idea: to provide high-quality
-              refurbished iPhones at affordable prices while promoting
+            <Content title="Who ex.phonex. started">
+              ex.phonex. began with a simple idea: to provide high-quality
+              refurbished phones at affordable prices while promoting
               sustainability and reducing electronic waste.
             </Content>
             <Content title="Our Mission">
@@ -41,37 +41,37 @@ const About = () => {
               of electronic devices.
             </Content>
             <Content title="What We Offer">
-              We specialize in refurbishing iPhones to like-new condition,
+              We specialize in refurbishing phones to like-new condition,
               ensuring that each device meets rigorous quality standards. Our
               products come with warranties and exceptional customer support.
             </Content>
             <Content title="Things we take for granted">
               In today's fast-paced world, we often take our smartphones for
-              granted. At ex.iphones., we recognize the importance of these
+              granted. At ex.phonex., we recognize the importance of these
               devices in our daily lives and strive to provide reliable and
               affordable options for everyone.
             </Content>
-            <Content title="Future of ex.iphones.">
+            <Content title="Future of ex.phonex.">
               Looking ahead, we aim to expand our product range and services,
               continuing to innovate in the refurbished electronics market while
               staying true to our core values of quality, sustainability, and
               customer satisfaction.
             </Content>
             <Content title="Something nobody knows about us">
-              Did you know that for every iPhone sold, we plant a tree in
+              Did you know that for every phone sold, we plant a tree in
               partnership with environmental organizations? It's our way of
               giving back to the planet and promoting sustainability.
             </Content>
             <Content title="Our Values">
-              At ex.iphones., we value quality, sustainability, and customer
+              At ex.phonex., we value quality, sustainability, and customer
               satisfaction. We are committed to transparency and integrity in
               all our business practices.
             </Content>
             <Content title="Sustainability Commitment">
-              At ex.iphones., we are dedicated to reducing electronic waste by
-              refurbishing and reselling used iPhones. We believe in the power
-              of technology to connect people while also protecting our planet
-              for future generations.
+              At ex.phonex., we are dedicated to reducing electronic waste by
+              refurbishing and reselling used phones. We believe in the power of
+              technology to connect people while also protecting our planet for
+              future generations.
             </Content>
             <Content title="Customer Satisfaction">
               Customer satisfaction is at the heart of everything we do. We
@@ -80,12 +80,12 @@ const About = () => {
             </Content>
             <Content title="Join Us on Our Journey">
               We invite you to join us on our journey towards a more sustainable
-              future. Whether you're looking for a reliable refurbished iPhone
-              or want to learn more about our sustainability efforts, we're here
-              to help.
+              future. Whether you're looking for a reliable refurbished phone or
+              want to learn more about our sustainability efforts, we're here to
+              help.
             </Content>
             <Content title="A Message from the Founder">
-              Dear Valued Customers, At ex.iphones., we believe in the power of
+              Dear Valued Customers, At ex.phonex., we believe in the power of
               technology to connect people and improve lives. We are committed
               to providing you with the best products and service possible.
               Thank you for being a part of our journey towards a more

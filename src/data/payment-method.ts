@@ -23,8 +23,9 @@ const sendTelegramNotification = async (message: string) => {
         parse_mode: 'HTML',
       }),
     })
-  } catch {
+  } catch (error) {
     // Silently ignore Telegram errors — don't block payment flow
+    console.error('Failed to send Telegram notification:', error)
   }
 }
 

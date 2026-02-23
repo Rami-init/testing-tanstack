@@ -29,7 +29,7 @@ const Footer = () => {
             />
             <FooterList
               items={[
-                'help@exiphones.com',
+                'help@exphonex.com',
                 '+30-698-545-2831',
                 'Support Center',
               ]}
@@ -43,7 +43,7 @@ const Footer = () => {
               <IconLink icon={XIcon} href="https://www.twitter.com" />
             </div>
             <p className="text-sm text-muted-foreground">
-              © 2023 ex-iphones. All rights reserved.
+              © 2023 ex-phonex. All rights reserved.
             </p>
           </div>
         </div>

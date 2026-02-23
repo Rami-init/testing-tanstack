@@ -69,7 +69,7 @@ function RouteComponent() {
     setTrackedOrder(null)
     try {
       const result = await trackOrderFn({ data })
-      setTrackedOrder(result as TrackedOrder)
+      setTrackedOrder(result as any)
       toast.success('Order found!')
     } catch (error) {
       toast.error(
