@@ -30,6 +30,10 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       },
       { name: 'robots', content: 'index, follow' },
       { name: 'theme-color', content: '#3858d6' },
+      {
+        name: 'google-site-verification',
+        content: 'FTp9sBlyA7DR_63neh5ik4k0pFpcNvRlMZEMkjFiYpA',
+      },
       // Open Graph
       { property: 'og:type', content: 'website' },
       { property: 'og:site_name', content: 'ex-phonex' },
