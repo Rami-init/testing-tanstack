@@ -19,7 +19,6 @@ const ProductView = ({ product }: { product: Product }) => {
   useEffect(() => {
     if (!api) return
     const onChange = () => {
-      console.log('Selected snap index:', api.selectedScrollSnap())
       setImageIndex(product.thumbnails?.[api.selectedScrollSnap()] || '')
     }
 
@@ -29,7 +28,6 @@ const ProductView = ({ product }: { product: Product }) => {
       api.off('select', onChange)
     }
   }, [api])
-  console.log('Rendering ProductView with product:', imageIndex)
   return (
     <section className="col-span-3  flex flex-col gap-8">
       <div className="w-full h-126 flex items-center justify-center border bg-white border-gray-200 p-4 rounded-lg transition-transform duration-500">

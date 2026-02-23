@@ -185,7 +185,6 @@ const ProductDetails = ({ product }: { product: ProductWithRelations }) => {
                   value={quantity}
                   onChange={(e) => handleQuantityChange(Number(e.target.value))}
                   min={1}
-                  defaultValue={1}
                   max={99}
                   className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 />

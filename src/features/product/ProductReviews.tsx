@@ -10,7 +10,6 @@ import { Separator } from '@/components/ui/separator'
 const ProductReviews = ({ product }: { product: ProductWithRelations }) => {
   const reviews = product.reviews
   const totalReviews = product.reviewsCounts || 0
-  console.log('Product Reviews:', product.customerReviews)
   function handleWriteReview() {
     toast.warning('Thanks — you can write a review after delivery.', {
       description:
@@ -129,19 +128,11 @@ const ProductReviews = ({ product }: { product: ProductWithRelations }) => {
 const CustomerReviewRating = ({
   title,
   count,
-  totalReviews,
 }: {
   title: string
   count: number
   totalReviews: number
 }) => {
-  console.log(
-    'Total Reviews in CustomerReviewRating:',
-    totalReviews,
-    count,
-    title,
-  )
-
   return (
     <div className="flex items-center gap-2">
       <span className="text-sm text-gray-500">{title}</span>

