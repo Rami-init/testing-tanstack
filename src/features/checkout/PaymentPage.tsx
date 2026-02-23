@@ -19,11 +19,11 @@ const PaymentPage = () => {
   const [status, setStatus] = useState<PaymentStatus>('processing')
   const [progress, setProgress] = useState(0)
   const [resultMessage, setResultMessage] = useState('')
-  const [resultOrderId, setResultOrderId] = useState<number | null>(null)
+  const [resultOrderId, setResultOrderId] = useState<string | null>(null)
   const hasStarted = useRef(false)
 
   const paymentMutation = useMutation({
-    mutationFn: (data: { orderId: number }) => processPaymentFn({ data }),
+    mutationFn: (data: { orderId: string }) => processPaymentFn({ data }),
     onSuccess: (result) => {
       setResultOrderId(result.orderId)
       setResultMessage(result.message)

@@ -6,6 +6,7 @@ import {
   pgTable,
   text,
   timestamp,
+  uuid,
   varchar,
 } from 'drizzle-orm/pg-core'
 import { address } from './address.schema'
@@ -27,9 +28,7 @@ export const orderStatusEnum = pgEnum('order_status', [
 
 // Order table - references existing user table (text id)
 export const order = pgTable('order', {
-  id: integer('id')
-    .primaryKey()
-    .generatedAlwaysAsIdentity({ startWith: 1, increment: 1 }),
+  id: uuid('id').primaryKey().defaultRandom(),
   userId: text('user_id')
     .notNull()
     .references(() => user.id, { onDelete: 'cascade' }),
@@ -60,7 +59,7 @@ export const orderItem = pgTable('order_item', {
   id: integer('id')
     .primaryKey()
     .generatedAlwaysAsIdentity({ startWith: 1, increment: 1 }),
-  orderId: integer('order_id')
+  orderId: uuid('order_id')
     .notNull()
     .references(() => order.id, { onDelete: 'cascade' }),
   productId: integer('product_id')

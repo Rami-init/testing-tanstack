@@ -27,10 +27,12 @@ export const CategoryItem = () => {
     return <CategoriesError />
   }
   return (
-    <Link to="/products" className="flex items-center gap-2.5">
+    <div className="flex items-center gap-2.5">
       {categories.map((category) => (
-        <div
+        <Link
           key={category.id}
+          to="/products"
+          search={{ categoryId: category.id }}
           className="flex flex-col gap-4 cursor-pointer hover:shadow-lg p-4 rounded-lg items-center transition duration-300 ease-in-out"
         >
           <img
@@ -41,9 +43,9 @@ export const CategoryItem = () => {
             className="rounded-lg object-cover w-30 h-19.5"
           />
           <h2 className="font-semibold text-lg text-center">{category.name}</h2>
-        </div>
+        </Link>
       ))}
-    </Link>
+    </div>
   )
 }
 const CategoriesSkeleton = () => {

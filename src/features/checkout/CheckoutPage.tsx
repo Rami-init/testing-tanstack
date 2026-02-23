@@ -142,7 +142,7 @@ const CheckoutPage = () => {
 
   // Payment dialog state
   const [paymentDialogOpen, setPaymentDialogOpen] = useState(false)
-  const [pendingOrderId, setPendingOrderId] = useState<number | null>(null)
+  const [pendingOrderId, setPendingOrderId] = useState<string | null>(null)
 
   // Fetch addresses and payment methods
   const addressQuery = useSuspenseQuery(fetchAddressQueryOptions())
@@ -505,7 +505,7 @@ const PROCESSING_DURATION = 30_000 // 30 seconds
 
 type PaymentProcessingDialogProps = {
   open: boolean
-  orderId: number | null
+  orderId: string | null
   processPaymentFn: ReturnType<typeof useServerFn<typeof processPayment>>
   onComplete: (status: 'paid' | 'declined') => void
 }
@@ -521,12 +521,12 @@ const PaymentProcessingDialog = ({
   )
   const [progress, setProgress] = useState(0)
   const [resultMessage, setResultMessage] = useState('')
-  const [resultOrderId, setResultOrderId] = useState<number | null>(null)
+  const [resultOrderId, setResultOrderId] = useState<string | null>(null)
   const hasStarted = useRef(false)
   const navigate = useRouter().navigate
 
   const paymentMutation = useMutation({
-    mutationFn: (data: { orderId: number }) => processPaymentFn({ data }),
+    mutationFn: (data: { orderId: string }) => processPaymentFn({ data }),
     onSuccess: (result) => {
       setResultOrderId(result.orderId)
       setResultMessage(result.message)

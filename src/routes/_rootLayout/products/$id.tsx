@@ -27,7 +27,7 @@ function RouteComponent() {
         <ProductDetails product={productQuery.data} />
       </section>
       <section className="flex flex-col gap-4 rounded-2xl border p-6 border-gray-200 bg-white">
-        <Tabs defaultValue="Reviews">
+        <Tabs defaultValue="Review">
           <TabsList
             variant="line"
             className="w-fit mb-4 justify-center mx-auto"

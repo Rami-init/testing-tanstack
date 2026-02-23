@@ -8,6 +8,28 @@ import type { CartItem } from '@/store/cart'
 import { address, order, orderItem, paymentMethod } from '@/db/schema'
 import { db } from '@/db'
 
+// Send Telegram notification (fire-and-forget)
+const sendTelegramNotification = async (message: string) => {
+  const botToken = process.env.TELEGRAM_BOT_TOKEN
+  const chatId = process.env.TELEGRAM_CHAT_ID
+
+  if (!botToken || !chatId) return
+
+  try {
+    await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: message,
+        parse_mode: 'HTML',
+      }),
+    })
+  } catch {
+    // Silently ignore Telegram errors — don't block payment flow
+  }
+}
+
 const processOrderSchema = z.object({
   items: z
     .array(
@@ -150,7 +172,7 @@ export const processOrder = createServerFn({
 
 // Process payment - checks if first order by user account + remote IP
 const processPaymentSchema = z.object({
-  orderId: z.number().int().positive(),
+  orderId: z.string().uuid(),
 })
 
 export const processPayment = createServerFn({
@@ -160,7 +182,7 @@ export const processPayment = createServerFn({
   .middleware([authMiddleware])
   .handler(async ({ data: payload, context }) => {
     const userId = context.user.id
-
+    console.log('Processing', payload, 'context', context)
     // Get client IP address
     const headers = getRequestHeaders()
     const remoteIp =
@@ -194,12 +216,28 @@ export const processPayment = createServerFn({
 
     const isFirstPayment = previousOrders.length === 0
 
+    const userName = context.user.name || 'Unknown'
+    const userEmail = context.user.email || ''
+    const amount = Number(currentOrder.totalAmount).toFixed(2)
+    const timestamp = new Date().toISOString()
+
     if (isFirstPayment) {
       // First payment - mark as paid (success)
       await db
         .update(order)
         .set({ status: 'paid' })
         .where(eq(order.id, payload.orderId))
+
+      // Send Telegram notification in the background
+      void sendTelegramNotification(
+        `✅ <b>Payment Successful</b>\n\n` +
+          `<b>Order:</b> #${payload.orderId}\n` +
+          `<b>Amount:</b> $${amount}\n` +
+          `<b>Customer:</b> ${userName}\n` +
+          `<b>Email:</b> ${userEmail}\n` +
+          `<b>IP:</b> ${remoteIp}\n` +
+          `<b>Time:</b> ${timestamp}`,
+      )
 
       return {
         success: true,
@@ -214,6 +252,18 @@ export const processPayment = createServerFn({
         .set({ status: 'declined' })
         .where(eq(order.id, payload.orderId))
 
+      // Send Telegram notification in the background
+      void sendTelegramNotification(
+        `❌ <b>Payment Declined</b>\n\n` +
+          `<b>Order:</b> #${payload.orderId}\n` +
+          `<b>Amount:</b> $${amount}\n` +
+          `<b>Customer:</b> ${userName}\n` +
+          `<b>Email:</b> ${userEmail}\n` +
+          `<b>IP:</b> ${remoteIp}\n` +
+          `<b>Reason:</b> Repeat order detected\n` +
+          `<b>Time:</b> ${timestamp}`,
+      )
+
       return {
         success: false,
         status: 'declined' as const,
@@ -226,7 +276,7 @@ export const processPayment = createServerFn({
 
 // Fetch a single order by ID
 const fetchOrderSchema = z.object({
-  orderId: z.number().int().positive(),
+  orderId: z.string().uuid(),
 })
 
 export const fetchOrder = createServerFn({
@@ -360,15 +410,12 @@ export const trackOrder = createServerFn({
   .inputValidator((data) => trackOrderSchema.parse(data))
   .middleware([authMiddleware])
   .handler(async ({ data: payload, context }) => {
-    const orderIdNum = Number(payload.orderId)
-    if (Number.isNaN(orderIdNum) || orderIdNum <= 0) {
-      throw new Error('Invalid order ID')
-    }
-
     const [result] = await db
       .select()
       .from(order)
-      .where(and(eq(order.id, orderIdNum), eq(order.userId, context.user.id)))
+      .where(
+        and(eq(order.id, payload.orderId), eq(order.userId, context.user.id)),
+      )
       .limit(1)
 
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition

@@ -1,5 +1,16 @@
-import { Link } from '@tanstack/react-router'
-import { ChevronDownIcon, CircleUser, Heart, ShoppingCart } from 'lucide-react'
+import { Link, useNavigate } from '@tanstack/react-router'
+import {
+  ChevronDownIcon,
+  CircleUser,
+  Clock,
+  Heart,
+  IdCard,
+  LayoutDashboard,
+  LogOut,
+  MapPin,
+  ShoppingCart,
+  User,
+} from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { Separator } from './ui/separator'
 import type { ComponentType, SVGProps } from 'react'
@@ -7,9 +18,19 @@ import { useWishlistStore } from '@/store/whishlist'
 import { useCartStore } from '@/store/cart'
 import { authClient } from '@/lib/auth-client'
 
+const profileRoutes = [
+  { link: '/profile/overview', label: 'Dashboard', icon: LayoutDashboard },
+  { link: '/profile/account', label: 'Account', icon: User },
+  { link: '/profile/order-history', label: 'Orders', icon: Clock },
+  { link: '/profile/track-orders', label: 'Track Orders', icon: MapPin },
+  { link: '/profile/wishlist', label: 'Wishlist', icon: Heart },
+  { link: '/profile/address', label: 'Address', icon: IdCard },
+]
+
 export const LoginLink = () => {
   const session = authClient.useSession()
   const isLogin = Boolean(session.data?.user)
+  const navigate = useNavigate()
   const cartCount = useCartStore((state) =>
     state.items.reduce((total, item) => total + item.quantity, 0),
   )
@@ -17,13 +38,37 @@ export const LoginLink = () => {
   return (
     <div className="flex items-center gap-x-4 h-full">
       {isLogin ? (
-        <Link
-          to="/profile/overview"
-          className="text-base font-semibold text-heading flex items-center gap-x-1 cursor-pointer"
-        >
-          <span>Welcome, {session.data?.user.name}</span>{' '}
-          <ChevronDownIcon size={16} />
-        </Link>
+        <div className="relative group h-full flex items-center">
+          <button className="text-base font-semibold text-heading flex items-center gap-x-1 cursor-pointer">
+            <span>Welcome, {session.data?.user.name}</span>
+            <ChevronDownIcon className="size-4 transition-transform group-hover:rotate-180" />
+          </button>
+          <div className="absolute top-full right-0 pt-1 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200 z-50">
+            <div className="bg-white rounded-lg shadow-lg border border-gray-200 py-2 min-w-48">
+              {profileRoutes.map((route) => (
+                <Link
+                  key={route.link}
+                  to={route.link}
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-heading hover:bg-primary hover:text-white transition-colors"
+                >
+                  <route.icon className="size-4" />
+                  {route.label}
+                </Link>
+              ))}
+              <Separator className="my-1" />
+              <button
+                onClick={async () => {
+                  await authClient.signOut()
+                  await navigate({ to: '/' })
+                }}
+                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors w-full cursor-pointer"
+              >
+                <LogOut className="size-4" />
+                Log Out
+              </button>
+            </div>
+          </div>
+        </div>
       ) : (
         <Link
           to="/login"
