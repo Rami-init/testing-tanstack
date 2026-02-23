@@ -6,8 +6,10 @@ import {
   pgTable,
   text,
   timestamp,
+  varchar,
 } from 'drizzle-orm/pg-core'
 import { address } from './address.schema'
+import { paymentMethod } from './payment-method.schema'
 import { product } from './product.schema'
 import { user } from './user.schema'
 import type { InferInsertModel, InferSelectModel } from 'drizzle-orm'
@@ -20,6 +22,7 @@ export const orderStatusEnum = pgEnum('order_status', [
   'delivered',
   'cancelled',
   'refunded',
+  'declined',
 ])
 
 // Order table - references existing user table (text id)
@@ -30,12 +33,21 @@ export const order = pgTable('order', {
   userId: text('user_id')
     .notNull()
     .references(() => user.id, { onDelete: 'cascade' }),
+  billingAddressId: integer('billing_address_id').references(() => address.id, {
+    onDelete: 'set null',
+  }),
   shippingAddressId: integer('shipping_address_id').references(
     () => address.id,
     { onDelete: 'set null' },
   ),
+  paymentMethodId: integer('payment_method_id').references(
+    () => paymentMethod.id,
+    { onDelete: 'set null' },
+  ),
+  orderNotes: text('order_notes'),
   status: orderStatusEnum('status').default('pending').notNull(),
   totalAmount: numeric('total_amount', { precision: 12, scale: 2 }).notNull(),
+  remoteIp: varchar('remote_ip', { length: 45 }), // Store client IP address
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at')
     .defaultNow()
@@ -65,11 +77,19 @@ export const orderRelations = relations(order, ({ one, many }) => ({
     fields: [order.userId],
     references: [user.id],
   }),
-
+  billingAddress: one(address, {
+    fields: [order.billingAddressId],
+    references: [address.id],
+    relationName: 'billingAddress',
+  }),
   shippingAddress: one(address, {
     fields: [order.shippingAddressId],
     references: [address.id],
     relationName: 'shippingAddress',
+  }),
+  paymentMethod: one(paymentMethod, {
+    fields: [order.paymentMethodId],
+    references: [paymentMethod.id],
   }),
   items: many(orderItem),
 }))

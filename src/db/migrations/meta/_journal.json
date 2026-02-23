@@ -71,6 +71,20 @@
       "when": 1770135705208,
       "tag": "0009_low_exiles",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1771858810137,
+      "tag": "0010_past_medusa",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1771861646195,
+      "tag": "0011_magical_brother_voodoo",
+      "breakpoints": true
     }
   ]
 }

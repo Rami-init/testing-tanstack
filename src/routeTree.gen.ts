@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as RootLayoutRouteImport } from './routes/_rootLayout'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as RootLayoutPaymentRouteImport } from './routes/_rootLayout/payment'
 import { Route as RootLayoutContactRouteImport } from './routes/_rootLayout/contact'
 import { Route as RootLayoutCheckoutRouteImport } from './routes/_rootLayout/checkout'
 import { Route as RootLayoutAboutRouteImport } from './routes/_rootLayout/about'
@@ -38,6 +39,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const RootLayoutPaymentRoute = RootLayoutPaymentRouteImport.update({
+  id: '/payment',
+  path: '/payment',
+  getParentRoute: () => RootLayoutRoute,
 } as any)
 const RootLayoutContactRoute = RootLayoutContactRouteImport.update({
   id: '/contact',
@@ -142,6 +148,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof RootLayoutAboutRoute
   '/checkout': typeof RootLayoutCheckoutRoute
   '/contact': typeof RootLayoutContactRoute
+  '/payment': typeof RootLayoutPaymentRoute
   '/forget-password': typeof RootLayoutAuthForgetPasswordRoute
   '/login': typeof RootLayoutAuthLoginRoute
   '/signup': typeof RootLayoutAuthSignupRoute
@@ -162,6 +169,7 @@ export interface FileRoutesByTo {
   '/about': typeof RootLayoutAboutRoute
   '/checkout': typeof RootLayoutCheckoutRoute
   '/contact': typeof RootLayoutContactRoute
+  '/payment': typeof RootLayoutPaymentRoute
   '/forget-password': typeof RootLayoutAuthForgetPasswordRoute
   '/login': typeof RootLayoutAuthLoginRoute
   '/signup': typeof RootLayoutAuthSignupRoute
@@ -185,6 +193,7 @@ export interface FileRoutesById {
   '/_rootLayout/about': typeof RootLayoutAboutRoute
   '/_rootLayout/checkout': typeof RootLayoutCheckoutRoute
   '/_rootLayout/contact': typeof RootLayoutContactRoute
+  '/_rootLayout/payment': typeof RootLayoutPaymentRoute
   '/_rootLayout/_auth/forget-password': typeof RootLayoutAuthForgetPasswordRoute
   '/_rootLayout/_auth/login': typeof RootLayoutAuthLoginRoute
   '/_rootLayout/_auth/signup': typeof RootLayoutAuthSignupRoute
@@ -207,6 +216,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/checkout'
     | '/contact'
+    | '/payment'
     | '/forget-password'
     | '/login'
     | '/signup'
@@ -227,6 +237,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/checkout'
     | '/contact'
+    | '/payment'
     | '/forget-password'
     | '/login'
     | '/signup'
@@ -249,6 +260,7 @@ export interface FileRouteTypes {
     | '/_rootLayout/about'
     | '/_rootLayout/checkout'
     | '/_rootLayout/contact'
+    | '/_rootLayout/payment'
     | '/_rootLayout/_auth/forget-password'
     | '/_rootLayout/_auth/login'
     | '/_rootLayout/_auth/signup'
@@ -285,6 +297,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_rootLayout/payment': {
+      id: '/_rootLayout/payment'
+      path: '/payment'
+      fullPath: '/payment'
+      preLoaderRoute: typeof RootLayoutPaymentRouteImport
+      parentRoute: typeof RootLayoutRoute
     }
     '/_rootLayout/contact': {
       id: '/_rootLayout/contact'
@@ -461,6 +480,7 @@ interface RootLayoutRouteChildren {
   RootLayoutAboutRoute: typeof RootLayoutAboutRoute
   RootLayoutCheckoutRoute: typeof RootLayoutCheckoutRoute
   RootLayoutContactRoute: typeof RootLayoutContactRoute
+  RootLayoutPaymentRoute: typeof RootLayoutPaymentRoute
   RootLayoutProductsIdRoute: typeof RootLayoutProductsIdRoute
   RootLayoutProductsCartRoute: typeof RootLayoutProductsCartRoute
   RootLayoutProductsIndexRoute: typeof RootLayoutProductsIndexRoute
@@ -472,6 +492,7 @@ const RootLayoutRouteChildren: RootLayoutRouteChildren = {
   RootLayoutAboutRoute: RootLayoutAboutRoute,
   RootLayoutCheckoutRoute: RootLayoutCheckoutRoute,
   RootLayoutContactRoute: RootLayoutContactRoute,
+  RootLayoutPaymentRoute: RootLayoutPaymentRoute,
   RootLayoutProductsIdRoute: RootLayoutProductsIdRoute,
   RootLayoutProductsCartRoute: RootLayoutProductsCartRoute,
   RootLayoutProductsIndexRoute: RootLayoutProductsIndexRoute,
