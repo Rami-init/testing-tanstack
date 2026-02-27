@@ -54,10 +54,15 @@ const CartSummary = () => {
           ? 49.0
           : 19.0
 
-  const discount = hasItems ? 43.0 : 0
+  const discountRate = 0.05 // 5% discount
+  const discount = hasItems ? subtotal * discountRate : 0
   const taxRate = 0.08 // 8% tax
-  const tax = hasItems ? (subtotal + shipping - discount) * taxRate : 0
-  const totalAmount = hasItems ? subtotal + shipping - discount + tax : 0
+  const tax = hasItems
+    ? Math.max(0, subtotal + shipping - discount) * taxRate
+    : 0
+  const totalAmount = hasItems
+    ? Math.max(0, subtotal + shipping - discount + tax)
+    : 0
   const handleCheckout = () => {
     if (!session.data?.user) {
       navigate({
@@ -135,7 +140,7 @@ const CartSummary = () => {
             </div>
           )}
           <div className="flex justify-between">
-            <span>Discount</span>
+            <span>Discount (5%)</span>
             <span className="text-green-600">-${discount.toFixed(2)}</span>
           </div>
           <div className="flex justify-between">

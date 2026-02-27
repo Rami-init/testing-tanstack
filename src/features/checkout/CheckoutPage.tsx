@@ -414,9 +414,10 @@ const CheckoutPage = () => {
           ? 49.0
           : 19.0
 
-  const discount = hasItems ? 43.0 : 0
-  const tax = hasItems ? (subtotal + shipping - discount) * 0.08 : 0
-  const total = hasItems ? subtotal + shipping - discount + tax : 0
+  const discountRate = 0.05 // 5% discount
+  const discount = hasItems ? subtotal * discountRate : 0
+  const tax = hasItems ? Math.max(0, subtotal + shipping - discount) * 0.08 : 0
+  const total = hasItems ? Math.max(0, subtotal + shipping - discount + tax) : 0
 
   const selectedBillingId = form.watch('billingAddressId')
   const selectedPaymentId = form.watch('paymentMethodId')
@@ -1513,7 +1514,7 @@ const OrderSummary = ({
 
           {/* Discount */}
           <div className="flex items-center justify-between text-muted-foreground">
-            <span>Discount</span>
+            <span>Discount (5%)</span>
             <span className="text-green-600">-${discount.toFixed(2)}</span>
           </div>
 
